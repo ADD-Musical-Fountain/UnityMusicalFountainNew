@@ -36,7 +36,8 @@ public class AudioTransform : MonoBehaviour
     public float particleSpread = 0.2f;
 
     public Vector3 particlePosition = new(-20f, 0f, 0f);
-    public GameObject particleSystemPrefab; // ???????????
+    public GameObject particleSystemPrefab; 
+    public GameObject particleSystemPrefabBottom;
     void Start()
     {
         //generate cube and pose as a circle(should be replace as fountain)
@@ -46,7 +47,7 @@ public class AudioTransform : MonoBehaviour
 
         float angle = 0f;
         float angleStep = 360f / (mainCircleNum);
-        float mainCircleRadius = 120f;
+        float mainCircleRadius = 80f;
 
         Vector3 mainCircleSratPos = startPoint.position;
 
@@ -155,7 +156,7 @@ public class AudioTransform : MonoBehaviour
 
         for (int i = 0; i < fountainNum; i++)
         {
-            velocitys[i].startSpeed = Mathf.Lerp((fountainTransforms[i].localScale.y)*0.01f, frequencyBands[i] * 100f, 0.5f);
+            velocitys[i].startSpeed = Mathf.Lerp((fountainTransforms[i].localScale.y) * 0.01f, frequencyBands[i] * 100f, 0.5f);
             // velocitys[i].startSpeed = Mathf.Lerp(fountainTransforms[i].localScale.y, spectrumData[i] * 10000f, 0.5f);
             // Debug.Log("the transform: " + fountainTransforms[i].localScale);
         }
@@ -165,59 +166,68 @@ public class AudioTransform : MonoBehaviour
     {
 
         GameObject particleSystemObject = Instantiate(particleSystemPrefab);
+        GameObject particleSystemObjectBottom = Instantiate(particleSystemPrefabBottom);
 
         ParticleSystem particleSystem = particleSystemObject.GetComponent<ParticleSystem>();
         ParticleSystem.MainModule mainModule = particleSystem.main;
         particleSystem.transform.rotation = Quaternion.Euler(-90, 0, 0);
         particleSystem.transform.position = position;
+        particleSystem.transform.localScale = new Vector3(10, 10, 10);
 
-        var renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
-        renderer.trailMaterial = trailMaterial;
-        renderer.renderMode = ParticleSystemRenderMode.Mesh;
-        renderer.SetMeshes(meshes);
+        ParticleSystem particleSystemBottom = particleSystemObjectBottom.GetComponent<ParticleSystem>();
+        particleSystemBottom.transform.position = position;
+        particleSystemBottom.transform.localScale = new Vector3(5, 5, 5);
+        // var renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
+        //renderer.trailMaterial = trailMaterial;
+        //renderer.renderMode = ParticleSystemRenderMode.Mesh;
+        //renderer.SetMeshes(meshes);
 
-        mainModule.startSize = particleSize;
-        mainModule.startSpeed = 8f;
-        mainModule.startLifetime = 3f;
-        mainModule.startColor = Color.white;
-        mainModule.gravityModifier = 0.2f;
-        mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
+        //mainModule.startSize = particleSize;
+        //mainModule.startSpeed = 8f;
+        //mainModule.startLifetime = 3f;
+        //mainModule.startColor = Color.white;
+        //mainModule.gravityModifier = 0.2f;
+        //mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
 
 
-        var force = new ParticleSystem.MinMaxCurve(-5f);
-        var forceOverLifetime = particleSystem.forceOverLifetime;
-        forceOverLifetime.enabled = true;
-        forceOverLifetime.space = ParticleSystemSimulationSpace.World;
-        forceOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
-        forceOverLifetime.y = force;
-        forceOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
+        //var force = new ParticleSystem.MinMaxCurve(-5f);
+        //var forceOverLifetime = particleSystem.forceOverLifetime;
+        //forceOverLifetime.enabled = true;
+        //forceOverLifetime.space = ParticleSystemSimulationSpace.World;
+        //forceOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
+        //forceOverLifetime.y = force;
+        //forceOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
 
-        var shape = particleSystem.shape;
+        //var shape = particleSystem.shape;
         // shape.shapeType = ParticleSystemShapeType.Box;
-        shape.shapeType = ParticleSystemShapeType.Cone;
-        shape.radius = particleSpread;
-        shape.angle = 5f;
+        //shape.shapeType = ParticleSystemShapeType.Cone;
+        //shape.radius = particleSpread;
+        //shape.angle = 5f;
 
         var emission = particleSystem.emission;
         emission.enabled = true;
-        emission.rateOverTime = 10;
+        emission.rateOverTime = 50;
 
-        var velocityOverLifetime = particleSystem.velocityOverLifetime;
-        velocityOverLifetime.enabled = true;
-        velocityOverLifetime.y = 10f;
-        velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
+        var emission2 = particleSystemBottom.emission;
+        emission2.enabled = true;
+        emission2.rateOverTime = 5;
 
-        // curve
-        AnimationCurve curve = new AnimationCurve();
-        curve.AddKey(0f, 1f);
-        curve.AddKey(0.5f, 0.5f);
-        curve.AddKey(1f, 0f);
+        //var velocityOverLifetime = particleSystem.velocityOverLifetime;
+        //velocityOverLifetime.enabled = true;
+        //velocityOverLifetime.y = 10f;
+        //velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
 
-        // trails
-        ParticleSystem.TrailModule trail = particleSystem.trails;
-        trail.enabled = true;
-        trail.lifetime = new ParticleSystem.MinMaxCurve(0.25f);
-        trail.widthOverTrail = new ParticleSystem.MinMaxCurve(1f, curve);
+        //// curve
+        //AnimationCurve curve = new AnimationCurve();
+        //curve.AddKey(0f, 1f);
+        //curve.AddKey(0.5f, 0.5f);
+        //curve.AddKey(1f, 0f);
+
+        //// trails
+        //ParticleSystem.TrailModule trail = particleSystem.trails;
+        //trail.enabled = true;
+        //trail.lifetime = new ParticleSystem.MinMaxCurve(0.25f);
+        //trail.widthOverTrail = new ParticleSystem.MinMaxCurve(1f, curve);
 
         ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
 
@@ -227,6 +237,7 @@ public class AudioTransform : MonoBehaviour
         }
 
         particleSystem.Play();
+        particleSystemBottom.Play();
         return particleSystem;
     }
 }
