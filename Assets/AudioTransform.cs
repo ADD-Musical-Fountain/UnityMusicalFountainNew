@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using static UnityEngine.ParticleSystem;
 
@@ -18,12 +20,18 @@ public class AudioTransform : MonoBehaviour
     // the given start point for pose the fountain
     public Transform startPoint;
     // the numbers of fountain, should be 2^n between 64 to 8192
-    public int fountainNum = 2048;
+    public int fountainNum = 64;
     // the scale transform of the fountain
-    private Transform[] fountainTransforms = new Transform[2048];
+    private Transform[] fountainTransforms = new Transform[64];
     private float[] frequencyBands = new float[2048];
-    private ParticleSystem.MainModule[] velocitys = new ParticleSystem.MainModule[2048];
+    private ParticleSystem.MainModule[] velocitys = new ParticleSystem.MainModule[64];
     private Vector3[] fountatinPosition = new Vector3[2048];
+
+    private Vector3 circleCenterMain;
+    private Vector3 circleCenterSub1;
+    private Vector3 circleCenterSub2;
+    private Transform[] mainCircleTransform = new Transform[16];
+    private float time;
     // Start is called before the first frame update
     public Material trailMaterial;
     public Mesh[] meshes;
@@ -36,8 +44,9 @@ public class AudioTransform : MonoBehaviour
     public float particleSpread = 0.2f;
 
     public Vector3 particlePosition = new(-20f, 0f, 0f);
-    public GameObject particleSystemPrefab; 
-    public GameObject particleSystemPrefabBottom;
+    public GameObject particleSystemPrefab;
+    // public GameObject particleSystemPrefabBottom;
+    public GameObject bottomLight;
     void Start()
     {
         //generate cube and pose as a circle(should be replace as fountain)
@@ -50,6 +59,7 @@ public class AudioTransform : MonoBehaviour
         float mainCircleRadius = 80f;
 
         Vector3 mainCircleSratPos = startPoint.position;
+        circleCenterMain = mainCircleSratPos;
 
         for (int i = 0; i < mainCircleNum; i++)
         {
@@ -60,6 +70,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem fountain = buildFountain(posi + mainCircleSratPos);
             velocitys[i] = fountain.main;
             fountainTransforms[i] = fountain.transform;
+            mainCircleTransform[i] = fountain.transform;
             angle += angleStep;
         }
 
@@ -89,6 +100,7 @@ public class AudioTransform : MonoBehaviour
 
         Vector3 subCircleStartPos1 = new Vector3(-mainCircleRadius - subCircleRadius * 1.5f, 0, mainCircleRadius * 2);
         subCircleStartPos1 = subCircleStartPos1 + startPoint.position;
+        circleCenterSub1 = subCircleStartPos1;
 
 
         for (int i = 0; i < subCircleNum; i++)
@@ -106,6 +118,7 @@ public class AudioTransform : MonoBehaviour
         angle = 0f;
         Vector3 subCircleStartPos2 = new Vector3(-mainCircleRadius + subCircleRadius * 1.5f, 0, -mainCircleRadius * 2);
         subCircleStartPos2 = subCircleStartPos2 + startPoint.position;
+        circleCenterSub2 = subCircleStartPos2;
 
         for (int i = 0; i < subCircleNum; i++)
         {
@@ -128,10 +141,26 @@ public class AudioTransform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Spectrum2Scale();
-        // Spectrum2Color();
+        // Spectrum2Scale();
+        UpdateMainCircleDirection();
+
     }
-    //thisAudioSource 
+
+    void UpdateMainCircleDirection()
+    {
+        time += Time.deltaTime * 1;
+        float sinValue = Mathf.Sin(time * 1) * 0.2f;
+        int len = mainCircleTransform.Length;
+        float radius = 5f;
+        for (int i = 0; i < len; i++)
+        {
+            Vector3 xzDirection = (circleCenterMain - mainCircleTransform[i].position).normalized;
+            Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
+            Console.WriteLine(newDirection.ToString());
+            mainCircleTransform[i].rotation = Quaternion.LookRotation(newDirection);
+        }
+    }
+
     void Spectrum2Scale()
     {
         thisAudioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
@@ -166,7 +195,8 @@ public class AudioTransform : MonoBehaviour
     {
 
         GameObject particleSystemObject = Instantiate(particleSystemPrefab);
-        GameObject particleSystemObjectBottom = Instantiate(particleSystemPrefabBottom);
+        // GameObject particleSystemObjectBottom = Instantiate(particleSystemPrefabBottom);
+        GameObject bottomLightObj = Instantiate(bottomLight);
 
         ParticleSystem particleSystem = particleSystemObject.GetComponent<ParticleSystem>();
         ParticleSystem.MainModule mainModule = particleSystem.main;
@@ -174,9 +204,11 @@ public class AudioTransform : MonoBehaviour
         particleSystem.transform.position = position;
         particleSystem.transform.localScale = new Vector3(10, 10, 10);
 
-        ParticleSystem particleSystemBottom = particleSystemObjectBottom.GetComponent<ParticleSystem>();
-        particleSystemBottom.transform.position = position;
-        particleSystemBottom.transform.localScale = new Vector3(5, 5, 5);
+        //ParticleSystem particleSystemBottom = particleSystemObjectBottom.GetComponent<ParticleSystem>();
+        //particleSystemBottom.transform.position = position;
+        //particleSystemBottom.transform.localScale = new Vector3(5, 5, 5);
+
+        bottomLightObj.transform.position = position;
         // var renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
         //renderer.trailMaterial = trailMaterial;
         //renderer.renderMode = ParticleSystemRenderMode.Mesh;
@@ -208,9 +240,9 @@ public class AudioTransform : MonoBehaviour
         emission.enabled = true;
         emission.rateOverTime = 50;
 
-        var emission2 = particleSystemBottom.emission;
-        emission2.enabled = true;
-        emission2.rateOverTime = 5;
+        //var emission2 = particleSystemBottom.emission;
+        //emission2.enabled = true;
+        //emission2.rateOverTime = 5;
 
         //var velocityOverLifetime = particleSystem.velocityOverLifetime;
         //velocityOverLifetime.enabled = true;
@@ -237,7 +269,7 @@ public class AudioTransform : MonoBehaviour
         }
 
         particleSystem.Play();
-        particleSystemBottom.Play();
+        // particleSystemBottom.Play();
         return particleSystem;
     }
 }
