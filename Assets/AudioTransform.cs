@@ -17,13 +17,16 @@ public class AudioTransform : MonoBehaviour
     public GameObject cubePrototype;
     // the given start point for pose the fountain
     public Transform startPoint;
-    // the numbers of fountain, should be 2^n between 64 to 8192
-    public int fountainNum = 2048;
+    // the numbers of fountain
+    public int fountainNum = 64;
+    int mainCircleNum;
+    int subCircleNum;
+    int curveNum;
     // the scale transform of the fountain
-    private Transform[] fountainTransforms = new Transform[2048];
-    private float[] frequencyBands = new float[2048];
-    private ParticleSystem.MainModule[] velocitys = new ParticleSystem.MainModule[2048];
-    private Vector3[] fountatinPosition = new Vector3[2048];
+    private List<Transform> fountainTransforms = new List<Transform>();
+    private List<float> frequencyBands = new List<float>();
+    private List<ParticleSystem.MainModule> velocitys = new List<ParticleSystem.MainModule>();
+    private List<Vector3> fountatinPosition = new List<Vector3>();
     // Start is called before the first frame update
     public Material trailMaterial;
     public Mesh[] meshes;
@@ -37,19 +40,20 @@ public class AudioTransform : MonoBehaviour
 
     public Vector3 particlePosition = new(-20f, 0f, 0f);
     public GameObject particleSystemPrefab; // ???????????
+
     void Start()
     {
         //generate cube and pose as a circle(should be replace as fountain)
-        int mainCircleNum = fountainNum / 4;
-        int subCircleNum = fountainNum / 6;
-        int curveNum = fountainNum / 4;
+        mainCircleNum = fountainNum / 4;
+        subCircleNum = fountainNum - fountainNum / 2;
+        curveNum = fountainNum / 4;
 
         float angle = 0f;
         float angleStep = 360f / (mainCircleNum);
         float mainCircleRadius = 120f;
 
         Vector3 mainCircleSratPos = startPoint.position;
-
+        int count = 0;
         for (int i = 0; i < mainCircleNum; i++)
         {
             // GameObject cube = Object.Instantiate(cubePrototype, p, cubePrototype.transform.rotation) as GameObject;
@@ -57,9 +61,18 @@ public class AudioTransform : MonoBehaviour
             float z = Mathf.Cos(Mathf.Deg2Rad * angle) * mainCircleRadius;
             Vector3 posi = new Vector3(x, 0, z);
             ParticleSystem fountain = buildFountain(posi + mainCircleSratPos);
-            velocitys[i] = fountain.main;
-            fountainTransforms[i] = fountain.transform;
+            if (velocitys.Count < mainCircleNum) {
+                velocitys.Add(fountain.main);
+            } else {
+                velocitys[count] = fountain.main;
+            }
+            if (fountainTransforms.Count < mainCircleNum) {
+                fountainTransforms.Add(fountain.transform);
+            } else {
+                fountainTransforms[count] = fountain.transform;
+            }
             angle += angleStep;
+            count += 1;
         }
 
         angle = 75f;
@@ -77,9 +90,18 @@ public class AudioTransform : MonoBehaviour
             float z = Mathf.Cos(Mathf.Deg2Rad * angle) * curveRadius;
             Vector3 posi = new Vector3(x, 0, z);
             ParticleSystem fountain = buildFountain(posi + curveStartPos);
-            velocitys[i] = fountain.main;
-            fountainTransforms[i] = fountain.transform;
+            if (velocitys.Count < mainCircleNum+curveNum) {
+                velocitys.Add(fountain.main);
+            } else {
+                velocitys[count] = fountain.main;
+            }
+            if (fountainTransforms.Count < mainCircleNum+curveNum) {
+                fountainTransforms.Add(fountain.transform);
+            } else {
+                fountainTransforms[count] = fountain.transform;
+            }
             angle += angleStep;
+            count += 1;
         }
 
         angle = 0f;
@@ -97,9 +119,18 @@ public class AudioTransform : MonoBehaviour
             float z = Mathf.Cos(Mathf.Deg2Rad * angle) * subCircleRadius;
             Vector3 posi = new Vector3(x, 0, z);
             ParticleSystem fountain = buildFountain(posi + subCircleStartPos1);
-            velocitys[i] = fountain.main;
-            fountainTransforms[i] = fountain.transform;
+            if (velocitys.Count < mainCircleNum+curveNum+subCircleNum) {
+                velocitys.Add(fountain.main);
+            } else {
+                velocitys[count] = fountain.main;
+            }
+            if (fountainTransforms.Count < mainCircleNum+curveNum+subCircleNum) {
+                fountainTransforms.Add(fountain.transform);
+            } else {
+                fountainTransforms[count] = fountain.transform;
+            }
             angle += angleStep;
+            count += 1;
         }
 
         angle = 0f;
@@ -113,11 +144,22 @@ public class AudioTransform : MonoBehaviour
             float z = Mathf.Cos(Mathf.Deg2Rad * angle) * subCircleRadius;
             Vector3 posi = new Vector3(x, 0, z);
             ParticleSystem fountain = buildFountain(posi + subCircleStartPos2);
-            velocitys[i] = fountain.main;
-            fountainTransforms[i] = fountain.transform;
+            if (velocitys.Count < mainCircleNum+curveNum+subCircleNum*2) {
+                velocitys.Add(fountain.main);
+            } else {
+                velocitys[count] = fountain.main;
+            }
+            if (fountainTransforms.Count < mainCircleNum+curveNum+subCircleNum*2) {
+                fountainTransforms.Add(fountain.transform);
+            } else {
+                fountainTransforms[count] = fountain.transform;
+            }
             angle += angleStep;
+            count += 1;
         }
+        // Debug.Log("the count: " + count);
 
+        fountainNum = count;
 
 
         // delay to play audio
@@ -131,34 +173,120 @@ public class AudioTransform : MonoBehaviour
         // Spectrum2Color();
     }
     //thisAudioSource 
+    // the original foutain height depends on the frequencybrand
+    // void Spectrum2Scale()
+    // {
+    //     thisAudioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
+    //     // frequency bands
+    //     int frequencyBandsNum = fountainNum/4;
+    //     int sampleCount = 8192 / fountainNum;
+    //     for (int i = 0; i < fountainNum; i++)
+    //     {
+    //         float average = 0;
+    //         for (int j = i * sampleCount; j < (i + 1) * sampleCount; j++)
+    //         {
+    //             average = average + spectrumData[j]*100;
+    //         }
+    //         if (frequencyBands.Count < fountainNum) {
+    //             frequencyBands.Add(average);
+    //         } else {
+    //             frequencyBands[i] = average;
+    //         }
+            
+    //         // if (frequencyBands[i]*10000 <= 0.01) {
+    //         //     Debug.Log("the frequencyBands: " + i);
+    //         // }
+    //     }
+    //     // Debug.Log("THE number of frequencyBands:" + frequencyBands.Count);
+    //     Debug.Log("the frequency: max-" + Mathf.Max(spectrumData)+ "; min-" + Mathf.Min(spectrumData));
+
+    //     Debug.Log("the frequency brands: max-" + Mathf.Max(frequencyBands.ToArray())+ "; min-" + Mathf.Min(frequencyBands.ToArray()));
+
+
+    //     for (int i = 0; i < fountainNum; i++)
+    //     {
+    //         velocitys[i].startSpeed = Mathf.Lerp((fountainTransforms[i].localScale.y)*0.01f, frequencyBands[i], 0.5f);
+    //         // velocitys[i].startSpeed = Mathf.Lerp(fountainTransforms[i].localScale.y, spectrumData[i] * 10000f, 0.5f);
+    //         // Debug.Log("the transform: " + fountainTransforms[i].localScale.y);
+    //         // Debug.Log("the frequencyBands: " + frequencyBands[i]);
+    //         // Debug.Log("the startSpeed: " + Mathf.Lerp((fountainTransforms[i].localScale.y), frequencyBands[i] * 100f, 0.5f));            
+    //     }
+
+    // }
     void Spectrum2Scale()
     {
         thisAudioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         // frequency bands
-        int count = 0;
+        int frequencyBandsNum = fountainNum/4;
         int sampleCount = 8192 / fountainNum;
-        for (int i = 0; i < fountainNum; i++)
+        for (int i = 0; i < frequencyBandsNum; i++)
         {
             float average = 0;
             for (int j = i * sampleCount; j < (i + 1) * sampleCount; j++)
             {
-                average = average + spectrumData[count] * (count + 1);
-                count = count + 1;
+                average = average + spectrumData[j]*200;
             }
-            average = average / count;
-            frequencyBands[i] = average * 10;
-        }
-        // for (int i = 0; i < fountainNum; i++) {
-        //     Debug.Log("frequency bands:" + frequencyBands[i]);
-        // }
+            if (frequencyBands.Count < frequencyBandsNum) {
+                frequencyBands.Add(average);
+            } else {
+                frequencyBands[i] = average;
+            }
 
-
-        for (int i = 0; i < fountainNum; i++)
-        {
-            velocitys[i].startSpeed = Mathf.Lerp((fountainTransforms[i].localScale.y)*0.01f, frequencyBands[i] * 100f, 0.5f);
-            // velocitys[i].startSpeed = Mathf.Lerp(fountainTransforms[i].localScale.y, spectrumData[i] * 10000f, 0.5f);
-            // Debug.Log("the transform: " + fountainTransforms[i].localScale);
         }
+
+        // normalize to range (0, 10)
+
+        float min_frequency = Mathf.Min(frequencyBands.ToArray());
+        float max_frequency = Mathf.Max(frequencyBands.ToArray());
+        for (int i = 0; i < frequencyBandsNum; i++) {
+            // if (min_frequency < 10) {
+            //     frequencyBands[i] = (frequencyBands[i] - min_frequency) / (max_frequency-min_frequency) * (max_speed-min_speed) + min_frequency;
+            // } else {
+            //     frequencyBands[i] = (frequencyBands[i] - min_frequency) / (max_frequency-min_frequency) * (max_speed-min_speed) + 10;
+            // }
+            if (min_frequency < 10) {
+                frequencyBands[i] = (frequencyBands[i] - min_frequency) / (max_frequency-min_frequency) * 10f + min_frequency;
+            } else {
+                frequencyBands[i] = (frequencyBands[i] - min_frequency) / (max_frequency-min_frequency) * 10f + 10;
+            }
+        }
+        // Debug.Log("THE number of frequencyBands:" + frequencyBands.Count);
+        // Debug.Log("the frequency: max-" + Mathf.Max(spectrumData)+ "; min-" + Mathf.Min(spectrumData));
+
+        max_frequency = Mathf.Max(frequencyBands.ToArray());
+        min_frequency = Mathf.Min(frequencyBands.ToArray());
+        Debug.Log("the frequency brands: max-" + max_frequency+ "; min-" + min_frequency);
+
+        int count = 0;
+        for (int i = 0; i < mainCircleNum; i++) {
+            ParticleSystem.MainModule module_v = velocitys[i];
+            module_v.startSpeed = max_frequency;
+            count += 1;
+        }
+        for (int i = 0; i < curveNum; i++)
+        {   
+            // velocitys[count].startSpeed = Mathf.Lerp((fountainTransforms[count].localScale.y)*0.01f, frequencyBands[i]*10f, 0.5f);
+            ParticleSystem.MainModule module_v = velocitys[count];
+            module_v.startSpeed = min_speed + Mathf.Lerp(fountainTransforms[count].localScale.y, frequencyBands[i], 0.5f);
+            count += 1;
+        }
+
+        for (int i = 0; i < subCircleNum*2; i++)
+        {   
+            // can be inspired by other condition
+            if (min_frequency > 2) {
+                ParticleSystem.MainModule module_v = velocitys[count];
+                module_v.startSpeed = min_frequency;
+            } else {
+                ParticleSystem.MainModule module_v = velocitys[count];
+                module_v.startLifetime = 0;
+                module_v.startSpeed = 0;
+            }
+            
+            count += 1;
+        }
+        
+
     }
 
     ParticleSystem buildFountain(Vector3 position)
