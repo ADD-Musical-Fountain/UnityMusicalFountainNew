@@ -1,4 +1,4 @@
 public enum ParticleType{
-    FIRE = 1,
-    ICE = 2
+    FIRE = 0,
+    ICE = 1
 }
