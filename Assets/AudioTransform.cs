@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using static UnityEngine.ParticleSystem;
+using MusicEventNameSpace;
 
 public class AudioTransform : MonoBehaviour
 {
@@ -53,6 +54,8 @@ public class AudioTransform : MonoBehaviour
     public GameObject particleSystemPrefab;
     // public GameObject particleSystemPrefabBottom;
     public GameObject bottomLight;
+
+    private EventEmitter emitter;
 
     void Start()
     {
@@ -169,18 +172,24 @@ public class AudioTransform : MonoBehaviour
 
         // delay to play audio
         thisAudioSource.PlayDelayed(2f);
+
+        // initial emitter
+        emitter = new EventEmitter();
+        emitter.getEventList();
     }
 
     // Update is called once per frame
     void Update()
     {
+        processEmitter();
         //UpdateCurveVelocity();
         //UpdataSubCircleVelocity();
         //shakeCurveLeftRight(5, 2);
         // shakeCurveLeftRightBy2(5, 2);
         // shakeCurveLeftRightBy4(5, 2);
         // shakeCurveLeftRightCross(5, 2);
-        updateCurveBySin();
+        // updateCurveBySin();
+        Debug.Log(Time.time);
         //setInnerMainCircleVelocity(1);
         //stopMainCurve();
         //mainCircleIncline(true);
@@ -193,6 +202,42 @@ public class AudioTransform : MonoBehaviour
         stopSubCircle(true, true);
 
     }
+
+    public void processEmitter()
+    {
+        if (emitter.eventList.Count == 0)
+        {
+            shakeCurveLeftRight(5, 2);
+            return;
+        }
+        if (Time.time < emitter.eventList[0].duration)
+        {
+            if (emitter.eventList[0].name != emitter.currentStatus)
+            {
+                emitter.setCurrStatus(emitter.eventList[0].name);
+            }
+        }
+        else
+        {
+            emitter.eventList.RemoveAt(0);
+        }
+        switch (emitter.currentStatus)
+        {
+            case "A":
+                updateCurveBySin();
+                break;
+            case "B":
+                shakeCurveLeftRightBy2(5, 2);
+                break;
+            case "C":
+                shakeCurveLeftRightBy4(5, 2);
+                break;
+            default:
+                shakeCurveLeftRight(5,2);
+                break;
+        }
+    }
+
     public static float Check(float b)
     {
         if (b < 0)
@@ -260,15 +305,16 @@ public class AudioTransform : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             ParticleSystem fountain = curveFountain[i];
+                ParticleSystem.MainModule main = fountain.main;
             if (i % 6 == 0 || i % 6 == 1)
             {
                 Vector3 xzDirection = new Vector3(0, 0, -1);
                 Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
+                main.startSpeed = 3;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
             else
             {
-                ParticleSystem.MainModule main = fountain.main;
                 main.startSpeed = 0;
             }
 
@@ -297,6 +343,7 @@ public class AudioTransform : MonoBehaviour
                 Vector3 xzDirection = new Vector3(0, 0, -1);
                 Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
+                main.startSpeed = 3f;
                 if (i % 10 == 2)
                 {
                     main.startSpeed = 4f;
@@ -324,6 +371,8 @@ public class AudioTransform : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             ParticleSystem fountain = curveFountain[i];
+            ParticleSystem.MainModule main = fountain.main;
+            main.startSpeed = 3f;
             if (i % 8 == 0 || i % 8 == 1 || i % 8 == 2 || i % 8 == 3)
             {
                 Vector3 xzDirection = new Vector3(0, 0, -1);
@@ -367,7 +416,9 @@ public class AudioTransform : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             ParticleSystem fountain = curveFountain[i];
-            Vector3 xzDirection = new Vector3(0,0,-1);
+            ParticleSystem.MainModule main = fountain.main;
+            main.startSpeed = 3f;
+            Vector3 xzDirection = new Vector3(0, 0, -1);
             Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
             fountain.transform.rotation = Quaternion.LookRotation(newDirection);
         }
@@ -421,10 +472,10 @@ public class AudioTransform : MonoBehaviour
     }
 
     // 设置小圈速度
-    void setInnerMainCircleVelocity(float speed=1)
+    void setInnerMainCircleVelocity(float speed = 1)
     {
         int len = innerMainCircleFounatin.Count;
-        for(int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++)
         {
             ParticleSystem.MainModule main = innerMainCircleFounatin[i].main;
             main.startSpeed = speed;
