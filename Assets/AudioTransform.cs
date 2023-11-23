@@ -1,11 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using UnityEngine.UIElements;
-using static UnityEngine.ParticleSystem;
 
 public class AudioTransform : MonoBehaviour
 {
@@ -178,16 +172,11 @@ public class AudioTransform : MonoBehaviour
             average = average / count;
             frequencyBands[i] = average * 10;
         }
-        // for (int i = 0; i < fountainNum; i++) {
-        //     Debug.Log("frequency bands:" + frequencyBands[i]);
-        // }
 
 
         for (int i = 0; i < fountainNum; i++)
         {
             velocitys[i].startSpeed = Mathf.Lerp((fountainTransforms[i].localScale.y) * 0.01f, frequencyBands[i] * 100f, 0.5f);
-            // velocitys[i].startSpeed = Mathf.Lerp(fountainTransforms[i].localScale.y, spectrumData[i] * 10000f, 0.5f);
-            // Debug.Log("the transform: " + fountainTransforms[i].localScale);
         }
     }
 
@@ -195,7 +184,6 @@ public class AudioTransform : MonoBehaviour
     {
 
         GameObject particleSystemObject = Instantiate(particleSystemPrefab);
-        // GameObject particleSystemObjectBottom = Instantiate(particleSystemPrefabBottom);
         GameObject bottomLightObj = Instantiate(bottomLight);
 
         ParticleSystem particleSystem = particleSystemObject.GetComponent<ParticleSystem>();
@@ -204,72 +192,13 @@ public class AudioTransform : MonoBehaviour
         particleSystem.transform.position = position;
         particleSystem.transform.localScale = new Vector3(10, 10, 10);
 
-        //ParticleSystem particleSystemBottom = particleSystemObjectBottom.GetComponent<ParticleSystem>();
-        //particleSystemBottom.transform.position = position;
-        //particleSystemBottom.transform.localScale = new Vector3(5, 5, 5);
-
         bottomLightObj.transform.position = position;
-        // var renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
-        //renderer.trailMaterial = trailMaterial;
-        //renderer.renderMode = ParticleSystemRenderMode.Mesh;
-        //renderer.SetMeshes(meshes);
-
-        //mainModule.startSize = particleSize;
-        //mainModule.startSpeed = 8f;
-        //mainModule.startLifetime = 3f;
-        //mainModule.startColor = Color.white;
-        //mainModule.gravityModifier = 0.2f;
-        //mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
-
-
-        //var force = new ParticleSystem.MinMaxCurve(-5f);
-        //var forceOverLifetime = particleSystem.forceOverLifetime;
-        //forceOverLifetime.enabled = true;
-        //forceOverLifetime.space = ParticleSystemSimulationSpace.World;
-        //forceOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
-        //forceOverLifetime.y = force;
-        //forceOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
-
-        //var shape = particleSystem.shape;
-        // shape.shapeType = ParticleSystemShapeType.Box;
-        //shape.shapeType = ParticleSystemShapeType.Cone;
-        //shape.radius = particleSpread;
-        //shape.angle = 5f;
 
         var emission = particleSystem.emission;
         emission.enabled = true;
         emission.rateOverTime = 50;
 
-        //var emission2 = particleSystemBottom.emission;
-        //emission2.enabled = true;
-        //emission2.rateOverTime = 5;
-
-        //var velocityOverLifetime = particleSystem.velocityOverLifetime;
-        //velocityOverLifetime.enabled = true;
-        //velocityOverLifetime.y = 10f;
-        //velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
-
-        //// curve
-        //AnimationCurve curve = new AnimationCurve();
-        //curve.AddKey(0f, 1f);
-        //curve.AddKey(0.5f, 0.5f);
-        //curve.AddKey(1f, 0f);
-
-        //// trails
-        //ParticleSystem.TrailModule trail = particleSystem.trails;
-        //trail.enabled = true;
-        //trail.lifetime = new ParticleSystem.MinMaxCurve(0.25f);
-        //trail.widthOverTrail = new ParticleSystem.MinMaxCurve(1f, curve);
-
-        ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
-
-        for (int j = 0; j < 100; j++)
-        {
-            particleSystem.Emit(emitParams, 1);
-        }
-
         particleSystem.Play();
-        // particleSystemBottom.Play();
         return particleSystem;
     }
 }
