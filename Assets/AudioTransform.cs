@@ -15,6 +15,8 @@ public class AudioTransform : MonoBehaviour
     // audio
     public AudioSource thisAudioSource;
     private float[] spectrumData = new float[1024];
+    private float volume;
+    private List<float> volumelist = new List<float>();
     public bool startPlay = false;
     public List<Vector3> curveControlPoint = new List<Vector3>();
     public GameObject WaterBallPrefab;
@@ -112,7 +114,7 @@ public class AudioTransform : MonoBehaviour
         processEmitter();
         audioAttribute();
 
-        Debug.Log(Time.time);
+        // Debug.Log(Time.time);
     }
     public void finalPose()
     {
@@ -914,7 +916,7 @@ public class AudioTransform : MonoBehaviour
             }
         }
     }
-}
+
 
     public void audioAttribute()
     {
@@ -922,13 +924,13 @@ public class AudioTransform : MonoBehaviour
         // frequency bands
         int frequencyBandsNum = 8;
         int sampleCount = 1024 / frequencyBandsNum;
-        float volume = 0;
+        volume = 0;
         for (int i = 0; i < frequencyBandsNum; i++)
         {
             float average = 0;
             for (int j = i * sampleCount; j < (i + 1) * sampleCount; j++)
             {
-                average = average + spectrumData[j]*j;
+                average = average + spectrumData[j];
             }
             if (frequencyBands.Count < frequencyBandsNum) {
                 frequencyBands.Add(average);
@@ -937,6 +939,19 @@ public class AudioTransform : MonoBehaviour
             }
             volume += frequencyBands[i];
         }
+        Debug.Log("the current volume:"+volume);
+        if (volume < 4) {
+            volume += 8;
+        } else if (volume > 4 && volume < 8) {
+            volume += 4;
+        } else if (volume > 8 && volume < 12) {
+            volume = volume;
+        } else {
+            volume = 12;
+        }
+        Debug.Log("the modify volume:"+volume);
+        // volumelist.Add(volume);
+        // Debug.Log("the max of volume:"+Mathf.Max(volumelist.ToArray()));
     }
     public Vector3 cubicBezier(float t)
     {
