@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
@@ -11,6 +8,7 @@ using UnityEngine.Animations;
 using UnityEngine.Rendering;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
+
 
 public class AudioTransform : MonoBehaviour
 {
@@ -880,7 +878,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-
     public void audioAttribute()
     {
         thisAudioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
@@ -935,6 +932,7 @@ public class AudioTransform : MonoBehaviour
             curveFountain.Add(fountain);
         }
     }
+
 
     public void generateCurve2Fountain()
     {

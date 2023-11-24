@@ -140,7 +140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &144066961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10445,7 +10445,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &833498183
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15739,6 +15739,10 @@ PrefabInstance:
     - target: {fileID: 1317290506449498999, guid: 044c6db2cd347fd4e974ccf496b843c7, type: 3}
       propertyPath: m_Name
       value: Splash12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1317290506449498999, guid: 044c6db2cd347fd4e974ccf496b843c7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25770,7 +25774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &1313673168
 Light:
   m_ObjectHideFlags: 0
@@ -25886,7 +25890,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1326295823
 Transform:
   m_ObjectHideFlags: 0
@@ -25919,7 +25923,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1441453131
 Transform:
   m_ObjectHideFlags: 0
@@ -35719,6 +35723,51 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &1964844018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1964844020}
+  - component: {fileID: 1964844019}
+  m_Layer: 0
+  m_Name: ExplosionLauncherSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1964844019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964844018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe89c63cc48047e469169e0de3051592, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 4
+--- !u!4 &1964844020
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964844018}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &2019941252 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 8287328387903467626, guid: c11b46513251d654eb891b7ccfeac62f, type: 3}
@@ -35764,7 +35813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &2027955048
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -40593,7 +40642,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &2106909008
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -45439,6 +45488,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Point Light
       objectReference: {fileID: 0}
+    - target: {fileID: 2986280134731208784, guid: c11b46513251d654eb891b7ccfeac62f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3755238374542018645, guid: c11b46513251d654eb891b7ccfeac62f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 169.23318
@@ -45512,14 +45565,15 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 963194228}
+  - {fileID: 1862375640}
   - {fileID: 705507995}
   - {fileID: 762237861}
+  - {fileID: 1964844020}
   - {fileID: 833498186}
   - {fileID: 1326295823}
   - {fileID: 2027955050}
   - {fileID: 7099370171471315312}
   - {fileID: 790584933}
-  - {fileID: 1862375640}
   - {fileID: 1313673169}
   - {fileID: 2106909010}
   - {fileID: 1257411635}
