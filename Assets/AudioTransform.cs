@@ -14,6 +14,13 @@ public class AudioTransform : MonoBehaviour
 {
     // audio
     public AudioSource thisAudioSource;
+    private float[] spectrumData = new float[1024];
+    public bool startPlay = false;
+    public List<Vector3> curveControlPoint = new List<Vector3>();
+    public GameObject WaterBallPrefab;
+    public GameObject _SplashPrefab;
+    public GameObject _SpillPrefab;
+    // public GameObject waterBall;
     public GameObject cubePrototype;
     public Transform startPoint;
 
@@ -35,10 +42,9 @@ public class AudioTransform : MonoBehaviour
     private float subTimer2;
     private float curveTimer;
 
-    public int fountainNum = 64;
-    int mainCircleNum;
-    int subCircleNum;
-    int curveNum;
+    int mainCircleNum = 32;
+    int subCircleNum = 32;
+    int curveNum = 32;
 
     private List<float> frequencyBands = new List<float>();
     public Material trailMaterial;
@@ -51,7 +57,7 @@ public class AudioTransform : MonoBehaviour
     public float particleLifetime = 1f;
     public float particleSpread = 0.2f;
 
-    public Vector3 particlePosition = new(-20f, 0f, 0f);
+    
 
     public GameObject particleSystemPrefab;
     // public GameObject particleSystemPrefabBottom;
@@ -62,120 +68,6 @@ public class AudioTransform : MonoBehaviour
 
     void Start()
     {
-        //generate cube and pose as a circle(should be replace as fountain)
-        mainCircleNum = 32;
-        subCircleNum = 32;
-        curveNum = 48;
-
-        float angle = 0f;
-        float angleStep = 360f / (mainCircleNum);
-        float mainCircleRadius = 80f;
-
-        Vector3 mainCircleSratPos = startPoint.position;
-        circleCenterMain = mainCircleSratPos;
-
-        for (int i = 0; i < mainCircleNum; i++)
-        {
-            // GameObject cube = Object.Instantiate(cubePrototype, p, cubePrototype.transform.rotation) as GameObject;
-            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * mainCircleRadius;
-            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * mainCircleRadius;
-            Vector3 posi = new Vector3(x, 0, z);
-            ParticleSystem fountain = buildFountain(posi + mainCircleSratPos);
-            mainCircleTransform.Add(fountain.transform);
-            mainCircleFounatin.Add(fountain);
-            angle += angleStep;
-        }
-
-        angle = 0f;
-        angleStep = 360f / (mainCircleNum);
-        mainCircleRadius = 70f;
-
-        for (int i = 0; i < mainCircleNum; i++)
-        {
-            // GameObject cube = Object.Instantiate(cubePrototype, p, cubePrototype.transform.rotation) as GameObject;
-            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * mainCircleRadius;
-            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * mainCircleRadius;
-            Vector3 posi = new Vector3(x, 0, z);
-            ParticleSystem fountain = buildFountain(posi + mainCircleSratPos);
-            innerMainCircleFounatin.Add(fountain);
-            angle += angleStep;
-        }
-
-        angle = 75f;
-        angleStep = 30f / (curveNum);
-        float curveRadius = 2000f;
-
-        Vector3 curveStartPos = new Vector3(-curveRadius - mainCircleRadius, 0, 0);
-        // curveStartPos = startPoint.position;
-        curveStartPos = curveStartPos + startPoint.position;
-
-        for (int i = 0; i < curveNum; i++)
-        {
-            // GameObject cube = Object.Instantiate(cubePrototype, p, cubePrototype.transform.rotation) as GameObject;
-            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * curveRadius;
-            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * curveRadius;
-            Vector3 posi = new Vector3(x, 0, z);
-            ParticleSystem fountain = buildFountain(posi + curveStartPos);
-            curveMainList.Add(fountain.main);
-            curveFountain.Add(fountain);
-            angle += angleStep;
-        }
-
-        angle = 75f;
-        angleStep = 30f / (curveNum);
-        for (int i = 0; i < curveNum; i++)
-        {
-            // GameObject cube = Object.Instantiate(cubePrototype, p, cubePrototype.transform.rotation) as GameObject;
-            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * curveRadius;
-            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * curveRadius;
-            Vector3 posi = new Vector3(x - 5, 0, z - 5);
-            ParticleSystem fountain = buildFountain(posi + curveStartPos, 2);
-            curveFountain2.Add(fountain);
-            angle += angleStep;
-        }
-
-        angle = 0f;
-        angleStep = 360f / (subCircleNum);
-        float subCircleRadius = 50f;
-
-        Vector3 subCircleStartPos1 = new Vector3(-mainCircleRadius - subCircleRadius * 1.5f, 0, mainCircleRadius * 2);
-        subCircleStartPos1 = subCircleStartPos1 + startPoint.position;
-        circleCenterSub1 = subCircleStartPos1;
-
-
-        for (int i = 0; i < subCircleNum; i++)
-        {
-            // GameObject cube = Object.Instantiate(cubePrototype, p, cubePrototype.transform.rotation) as GameObject;
-            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * subCircleRadius;
-            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * subCircleRadius;
-            Vector3 posi = new Vector3(x, 0, z);
-            ParticleSystem fountain = buildFountain(posi + subCircleStartPos1);
-            subCircleTransform1.Add(fountain.transform);
-            subCircleFountain1.Add(fountain);
-            angle += angleStep;
-        }
-
-        angle = 0f;
-        Vector3 subCircleStartPos2 = new Vector3(-mainCircleRadius + subCircleRadius * 1.5f, 0, -mainCircleRadius * 2);
-        subCircleStartPos2 = subCircleStartPos2 + startPoint.position;
-        circleCenterSub2 = subCircleStartPos2;
-
-        for (int i = 0; i < subCircleNum; i++)
-        {
-            // GameObject cube = Object.Instantiate(cubePrototype, p, cubePrototype.transform.rotation) as GameObject;
-            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * subCircleRadius;
-            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * subCircleRadius;
-            Vector3 posi = new Vector3(x, 0, z);
-            ParticleSystem fountain = buildFountain(posi + subCircleStartPos2);
-            subCircleTransform2.Add(fountain.transform);
-            subCircleFountain2.Add(fountain);
-            angle += angleStep;
-        }
-        // Debug.Log("the count: " + count);
-
-        // delay to play audio
-        thisAudioSource.PlayDelayed(2f);
-
         // initial emitter
         emitter = new EventEmitter();
         emitter.getEventList();
@@ -186,10 +78,42 @@ public class AudioTransform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        if (curveControlPoint.Count < 4) {
+            if (Input.GetMouseButtonDown(0)) {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    curveControlPoint.Add(hit.point);
+
+                    Vector3 waterballPos = new Vector3(hit.point[0], 0.5f, hit.point[2]);
+                    GameObject waterballObject = Instantiate(WaterBallPrefab);
+                    ParticleSystem waterball = waterballObject.GetComponent<ParticleSystem>();
+                    waterball.transform.position = waterballPos;
+
+                    GameObject splasObejct = Instantiate(_SplashPrefab);
+                    ParticleSystem splas = splasObejct.GetComponent<ParticleSystem>();
+                    splas.transform.position = hit.point;
+                    splas.Play();
+                    Debug.Log("the position of selected control point:"+hit.point);
+                }
+            }
+        }
+        if (curveControlPoint.Count == 4 && startPlay == false) {
+            generateCurveFountain();
+            generateSubCircleFountain();
+            generateMainCircleFountain();
+            startPlay = true;
+            // delay to play audio
+            thisAudioSource.PlayDelayed(2f);
+        }
+
         processEmitter();
+        audioAttribute();
+
         Debug.Log(Time.time);
     }
-
     public void finalPose()
     {
         stopMainCircle(true, true);
@@ -469,7 +393,7 @@ public class AudioTransform : MonoBehaviour
             main.startSpeed = speed;
         }
     }
-    //×óÓÒÅçÉä£¬Î¢Ğ¡°Ú¶¯£¬Á½¸öÒ»×é£¬¼ä¸ôËÄ¸ö£¬×îºó´ó¼ÒÒ»Æğ·¢Éä
+    //å·¦å³å–·å°„ï¼Œå¾®å°æ‘†åŠ¨ï¼Œä¸¤ä¸ªä¸€ç»„ï¼Œé—´éš”å››ä¸ªï¼Œæœ€åå¤§å®¶ä¸€èµ·å‘å°„
     private float shakeCurveLeftRightBy2Timer;
     void shakeCurveLeftRightBy2(float width, float velocity, bool isRight = true)
     {
@@ -509,7 +433,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    //½»²æÅçÉä£¬Î¢Ğ¡°Ú¶¯£¬Á½¸öÒ»×é£¬¼ä¸ôËÄ¸ö£¬×îºó´ó¼ÒÒ»Æğ·¢Éä
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä£¬Î¢Ğ¡ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½é£¬ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
     private float crossCurveLeftRightBy2Timer;
     void crossCurveLeftRightBy2(float width, float velocity, int step = 0)
     {
@@ -550,7 +474,7 @@ public class AudioTransform : MonoBehaviour
     }
 
 
-    //×óÓÒÅçÉä£¬Î¢Ğ¡°Ú¶¯£¬ËÄ¸öÒ»×é£¬µÚÈı¸ö±È½Ï¸ß£¬¼ä¸ô°Ë¸ö
+    //å·¦å³å–·å°„ï¼Œå¾®å°æ‘†åŠ¨ï¼Œå››ä¸ªä¸€ç»„ï¼Œç¬¬ä¸‰ä¸ªæ¯”è¾ƒé«˜ï¼Œé—´éš”å…«ä¸ª
 
     private float shakeCurveLeftRightBy4Timer;
     void shakeCurveLeftRightBy4(float width, float velocity, int step = 0)
@@ -590,7 +514,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    //×óÓÒ½»²æ£¬ËÄ¸ö×óËÄ¸öÓÒ£¬Î¢Ğ¡°Ú¶¯
+    //å·¦å³äº¤å‰ï¼Œå››ä¸ªå·¦å››ä¸ªå³ï¼Œå¾®å°æ‘†åŠ¨
     private float shakeCurveLeftRightCrossTimer;
     void shakeCurveLeftRightCross(float width, float velocity)
     {
@@ -624,7 +548,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    //ÕıÏÒº¯Êı°Ú¶¯
+    //æ­£å¼¦å‡½æ•°æ‘†åŠ¨
     void updateCurveBySin()
     {
         curveTimer += Time.deltaTime * 1;
@@ -638,7 +562,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ÕıÏÒº¯Êı¹Ì¶¨·¢Éä
     void fixedCurveBySin()
     {
         int len = curveMainList.Count;
@@ -652,8 +575,8 @@ public class AudioTransform : MonoBehaviour
             v.startSpeed = 8 + sinValue;
         }
     }
-
-    //È«²¿×óÓÒÒ¡°Ú
+    
+    //å…¨éƒ¨å·¦å³æ‘‡æ‘†
     private float shakeCurveLeftRightTimer;
     void shakeCurveLeftRight(float width, float velocity)
     {
@@ -674,7 +597,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ×ó±ßÏò×ó£¬ÓÒ±ßÏòÓÒ
+    
     void spiltCurveLeftRight(float width, float velocity)
     {
         int len = curveFountain.Count;
@@ -716,7 +639,7 @@ public class AudioTransform : MonoBehaviour
 
         }
     }
-    // Íâ»·ÏòÍâ/ÏòÀï
+    // ï¿½â»·ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½
 
     void mainCircleIncline(bool outside = true)
     {
@@ -785,7 +708,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ÉèÖÃĞ¡È¦ËÙ¶È
     void setInnerMainCircleVelocity(float speed = 1)
     {
         int len = innerMainCircleFounatin.Count;
@@ -796,7 +718,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ÉèÖÃ´óÈ¦ËÙ¶È
     void setMainCircleVelocity(float speed = 4)
     {
         int len = mainCircleFounatin.Count;
@@ -807,7 +728,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ´óÈ¦Ò¡°Ú
+    
     private float updateMainCircleDirectionTimer;
     void updateMainCircleDirection()
     {
@@ -839,8 +760,6 @@ public class AudioTransform : MonoBehaviour
             innerMainCircleFounatin[i].transform.rotation = Quaternion.LookRotation(newDirection);
         }
     }
-
-    // ÏòÇĞÏß·½ÏòÇãĞ±
 
     private float mainCircleInclineTangentTimer;
     void mainCircleInclineTangent(bool outside = true)
@@ -909,7 +828,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // Ğ¡È¦Ò¡°Ú
     void updateSubCircleDirection1()
     {
         subTimer1 += Time.deltaTime * 1;
@@ -997,3 +915,124 @@ public class AudioTransform : MonoBehaviour
         }
     }
 }
+
+    public void audioAttribute()
+    {
+        thisAudioSource.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
+        // frequency bands
+        int frequencyBandsNum = 8;
+        int sampleCount = 1024 / frequencyBandsNum;
+        float volume = 0;
+        for (int i = 0; i < frequencyBandsNum; i++)
+        {
+            float average = 0;
+            for (int j = i * sampleCount; j < (i + 1) * sampleCount; j++)
+            {
+                average = average + spectrumData[j]*j;
+            }
+            if (frequencyBands.Count < frequencyBandsNum) {
+                frequencyBands.Add(average);
+            } else {
+                frequencyBands[i] = average;
+            }
+            volume += frequencyBands[i];
+        }
+    }
+    public Vector3 cubicBezier(float t)
+    {
+        Vector3 a = curveControlPoint[0];
+        Vector3 b = curveControlPoint[1];
+        Vector3 c = curveControlPoint[2];
+        Vector3 d = curveControlPoint[3];
+
+        float B0 = (1-t)*(1-t)*(1-t); 
+        float B1 = 3*t*(1-t)*(1-t); 
+        float B2 = 3*t*t*(1-t); 
+        float B3 = t*t*t; 
+
+        float x = B0 * a[0] + B1* b[0] + B2*c[0] +B3*d[0];
+        float z = B0 * a[2] + B1* b[2] + B2*c[2] +B3*d[2];
+        float y = 0;
+        Vector3 position = new Vector3(x,y,z);
+        return position;
+    }
+    public void generateCurveFountain()
+    {
+        for (int i = 0; i < curveNum; i++) {
+            float t = (i * 1.0f) / curveNum;
+            Vector3 posi = cubicBezier(t);
+            ParticleSystem fountain = buildFountain(posi);
+            curveMainList.Add(fountain.main);
+            curveFountain.Add(fountain);
+        }
+    }
+    public void generateSubCircleFountain()
+    {   
+        float angle = 0f;
+        float angleStep = 360f / (subCircleNum);
+        float subCircleRadius = 50f;
+
+        Vector3 subCircleStartPos1 = new Vector3((curveControlPoint[0][0]+curveControlPoint[1][0])/2, 0,  (curveControlPoint[0][2]+curveControlPoint[1][2])/2);
+        circleCenterSub1 = subCircleStartPos1;
+
+        for (int i = 0; i < subCircleNum; i++) {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * subCircleRadius;
+            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * subCircleRadius;
+            Vector3 posi = new Vector3(x, 0, z);
+            ParticleSystem fountain = buildFountain(posi + subCircleStartPos1);
+            subCircleTransform1.Add(fountain.transform);
+            subCircleFountain1.Add(fountain);
+            angle += angleStep;
+            Debug.Log("sub circle fountain position:"+posi);
+        }
+
+        angle = 0f;
+        Vector3 subCircleStartPos2 = new Vector3((curveControlPoint[2][0]+curveControlPoint[3][0])/2, 0,  (curveControlPoint[2][2]+curveControlPoint[3][2])/2);
+        circleCenterSub2 = subCircleStartPos2;
+        for (int i = 0; i < subCircleNum; i++)
+        {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * subCircleRadius;
+            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * subCircleRadius;
+            Vector3 posi = new Vector3(x, 0, z);
+            ParticleSystem fountain = buildFountain(posi + subCircleStartPos2);
+            subCircleTransform2.Add(fountain.transform);
+            subCircleFountain2.Add(fountain);
+            angle += angleStep;
+        }
+    }
+    public void generateMainCircleFountain()
+    {   
+        float angle = 0f;
+        float angleStep = 360f / (mainCircleNum);
+        float mainCircleRadius = 80f;
+
+        Vector3 mainCircleSratPos = new Vector3((curveControlPoint[1][0]+curveControlPoint[2][0])/2, 0,  (curveControlPoint[1][2]+curveControlPoint[2][2])/2);
+        circleCenterMain = mainCircleSratPos;
+
+        for (int i = 0; i < mainCircleNum; i++)
+        {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * mainCircleRadius;
+            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * mainCircleRadius;
+            Vector3 posi = new Vector3(x, 0, z);
+            ParticleSystem fountain = buildFountain(posi + mainCircleSratPos);
+            mainCircleTransform.Add(fountain.transform);
+            mainCircleFounatin.Add(fountain);
+            angle += angleStep;
+        }
+
+        angle = 0f;
+        angleStep = 360f / (mainCircleNum);
+        mainCircleRadius = 70f;
+
+        for (int i = 0; i < mainCircleNum; i++)
+        {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * mainCircleRadius;
+            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * mainCircleRadius;
+            Vector3 posi = new Vector3(x, 0, z);
+            ParticleSystem fountain = buildFountain(posi + mainCircleSratPos);
+            innerMainCircleFounatin.Add(fountain);
+            angle += angleStep;
+        }
+    }
+}
+
