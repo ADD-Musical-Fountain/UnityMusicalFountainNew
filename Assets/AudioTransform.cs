@@ -7,6 +7,8 @@ using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using static UnityEngine.ParticleSystem;
 using MusicEventNameSpace;
+using UnityEngine.Animations;
+using UnityEngine.Rendering;
 
 public class AudioTransform : MonoBehaviour
 {
@@ -56,6 +58,7 @@ public class AudioTransform : MonoBehaviour
     public GameObject bottomLight;
 
     private EventEmitter emitter;
+    private List<ParticleSystem> ADDList = new List<ParticleSystem>();
 
     void Start()
     {
@@ -176,6 +179,8 @@ public class AudioTransform : MonoBehaviour
         // initial emitter
         emitter = new EventEmitter();
         emitter.getEventList();
+
+        finalPose();
     }
 
     // Update is called once per frame
@@ -185,11 +190,53 @@ public class AudioTransform : MonoBehaviour
         Debug.Log(Time.time);
     }
 
+    public void finalPose()
+    {
+        stopMainCircle(true, true);
+        stopSubCircle(true, true);
+        stopCurve1();
+        stopCurve2();
+        ParticleSystem A1 = buildFountain(new Vector3(0, 0, 150), 15, 400);
+        ParticleSystem A2 = buildFountain(new Vector3(0, 0, 50), 15, 400);
+        ParticleSystem A3 = buildFountain(new Vector3(0, 130, 175), 8, 400);
+        A1.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.1f));
+        A2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, 0.1f));
+        A3.transform.rotation = Quaternion.LookRotation(Vector3.up * 2 + new Vector3(0, 0, -2f));
+
+        ParticleSystem D1 = buildFountain(new Vector3(0, 0, 0), 15, 400);
+        ParticleSystem D2 = buildFountain(new Vector3(0, 200, 0), 5, 400, 4);
+        D2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
+
+        ParticleSystem D4 = buildFountain(new Vector3(0, 0, -100), 15, 400);
+        ParticleSystem D5 = buildFountain(new Vector3(0, 200, -100), 5, 400, 4);
+        D5.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
+
+        ADDList.Add(A1);
+        ADDList.Add(A2);
+        ADDList.Add(A3);
+        ADDList.Add(D1);
+        ADDList.Add(D2);
+        ADDList.Add(D4);
+        ADDList.Add(D5);
+        stopADD();
+    }
+
+    private void activateFinalPose()
+    {
+        int len = ADDList.Count;
+        for (int i = 0; i < len; i++)
+        {
+            ParticleSystem particle = ADDList[i];
+            ParticleSystem.EmissionModule emission = particle.emission;
+            ParticleSystem.MainModule main = particle.main;
+            emission.enabled = true;
+        }
+    }
+
     public void processEmitter()
     {
         if (emitter.eventList.Count == 0)
         {
-            shakeCurveLeftRight(3, 2);
             return;
         }
         if (Time.time < emitter.eventList[0].duration)
@@ -210,12 +257,14 @@ public class AudioTransform : MonoBehaviour
                 stopCurve2();
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "B":
                 shakeCurveLeftRightBy2(2, 2, false);
                 stopCurve2();
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "C1":
                 startEmit(true, true, false, false, false, false);
@@ -223,6 +272,7 @@ public class AudioTransform : MonoBehaviour
                 setCurve2Velocity(8);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "C2":
                 startEmit(true, true, false, false, false, false);
@@ -230,6 +280,7 @@ public class AudioTransform : MonoBehaviour
                 setCurve2Velocity(8);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "C3":
                 startEmit(true, true, false, false, false, false);
@@ -237,24 +288,28 @@ public class AudioTransform : MonoBehaviour
                 setCurve2Velocity(8);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "D1":
                 shakeCurveLeftRightBy4(3, 2, 2);
                 stopCurve2();
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "D2":
                 shakeCurveLeftRightBy4(3, 2, 1);
                 stopCurve2();
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "D3":
                 shakeCurveLeftRightBy4(3, 2, 0);
                 stopCurve2();
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "E":
                 setDirectionUpCurve1();
@@ -262,27 +317,31 @@ public class AudioTransform : MonoBehaviour
                 stopCurve2();
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "F":
-                setCurve1Velocity(8);
+                setCurve1Velocity(12);
                 shakeCurveLeftRightCross(2, 2);
                 stopCurve2();
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "G":
+                setMainCircleVelocity(10);
                 mainCircleInclineDynamic();
                 spiltCurveLeftRight(2, 2);
                 stopCurve2();
                 stopSubCircle(true, true);
+                stopADD();
                 break;
             case "H":
                 mainCircleInclineTangent();
-                //spiltCurveLeftRight(2, 2);
                 setSubCircleVelocity1(12);
                 setSubCircleVelocity2(12);
                 stopCurve2();
                 stopCurve1();
+                stopADD();
                 break;
             case "I":
                 mainCircleIncline();
@@ -290,6 +349,11 @@ public class AudioTransform : MonoBehaviour
                 stopCurve2();
                 stopCurve1();
                 stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "FINAL":
+                stopMainCircle(true, true);
+                activateFinalPose();
                 break;
             default:
                 shakeCurveLeftRight(3, 2);
@@ -309,7 +373,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    ParticleSystem buildFountain(Vector3 position, float speed = 3)
+    ParticleSystem buildFountain(Vector3 position, float speed = 3, float number = 50, float lifetime = 0)
     {
 
         GameObject particleSystemObject = Instantiate(particleSystemPrefab);
@@ -321,16 +385,33 @@ public class AudioTransform : MonoBehaviour
         particleSystem.transform.position = position;
         particleSystem.transform.localScale = new Vector3(10, 10, 10);
 
+        if (lifetime != 0)
+        {
+            mainModule.startLifetime = new ParticleSystem.MinMaxCurve(1.5f, lifetime);
+        }
+
         mainModule.startSpeed = speed;
 
         //bottomLightObj.transform.position = position;
 
         var emission = particleSystem.emission;
         emission.enabled = true;
-        emission.rateOverTime = 50;
+        emission.rateOverTime = number;
 
         particleSystem.Play();
         return particleSystem;
+    }
+
+    void stopADD()
+    {
+        int len = ADDList.Count;
+        for (int i = 0; i < len; i++)
+        {
+            ParticleSystem particle = ADDList[i];
+            ParticleSystem.EmissionModule emission = particle.emission;
+            ParticleSystem.MainModule main = particle.main;
+            emission.enabled = false;
+        }
     }
 
     // curve
@@ -670,11 +751,11 @@ public class AudioTransform : MonoBehaviour
         int len = innerMainCircleFounatin.Count;
         for (int i = 0; i < len; i++)
         {
-            float sinValue = Check(Mathf.Sin((float)((i+ innerMainCircleSinTimer) * Math.PI / 6)) * 3);
+            float sinValue = Check(Mathf.Sin((float)((i + innerMainCircleSinTimer) * Math.PI / 6)) * 3);
             ParticleSystem.MainModule v = innerMainCircleFounatin[i].main;
             ParticleSystem.EmissionModule emission = innerMainCircleFounatin[i].emission;
             emission.enabled = true;
-            v.startSpeed = 8+ sinValue;
+            v.startSpeed = 8 + sinValue;
         }
     }
 
@@ -695,10 +776,10 @@ public class AudioTransform : MonoBehaviour
 
             xzDirection = (circleCenterMain - mainCircleTransform[i].position).normalized;
 
-            Vector3 outDir = xzDirection * -1f ;
+            Vector3 outDir = xzDirection * -1f;
 
 
-            Vector3 newDirection = Vector3.up + xzDirection*-0.3f+outDir*sinValue;
+            Vector3 newDirection = Vector3.up*2 + xzDirection * -0.2f + outDir * sinValue;
             Console.WriteLine(newDirection.ToString());
             mainCircleTransform[i].rotation = Quaternion.LookRotation(newDirection);
         }

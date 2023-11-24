@@ -39,6 +39,7 @@ namespace MusicEventNameSpace
             list.Add(new MusicEvent(35, "G"));
             list.Add(new MusicEvent(40, "H"));
             list.Add(new MusicEvent(45, "I"));
+            list.Add(new MusicEvent(55, "FINAL"));
             eventList = list;
             return list;
         }
