@@ -4,23 +4,10 @@ public static class Constants
 {
     public const float MUSIC_TIME = 223.0f;
     public const float EXPLOSIONLAUNCHERSYSTEM_RADIUS = 40.0f;
+    public const float APPEAR_SPEED = 0.05f;
+    public const float DISAPPEAR_SPEED = 0.10f;
     public const int PARTICLE_TYPE_NUM = 2;
     public const int LAUNCH_TIME = 4;
-
-    public static ParticleSystem.MinMaxCurve GetParticleLifeTime()
-    {
-        return new ParticleSystem.MinMaxCurve(1.0f, 1.5f);
-    }
-
-    public static ParticleSystem.MinMaxCurve GetParticleSize()
-    {
-        return new ParticleSystem.MinMaxCurve(0.1f, 0.25f);
-    }
-
-    public static ParticleSystem.MinMaxCurve GetParticleSpeed()
-    {
-        return new ParticleSystem.MinMaxCurve(9.0f, 12.0f);
-    }
 
     public static Mesh GetSphereMesh()
     {
@@ -33,9 +20,13 @@ public static class Constants
     public static Queue GetLaunchTimeTable()
     {
         Queue q = new Queue();
+        q.Enqueue(5);
         q.Enqueue(10);
+        q.Enqueue(15);
         q.Enqueue(20);
+        q.Enqueue(25);
         q.Enqueue(30);
+        q.Enqueue(35);
         q.Enqueue(40);
 
         return q;
