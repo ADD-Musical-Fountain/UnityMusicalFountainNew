@@ -7,6 +7,8 @@ using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using static UnityEngine.ParticleSystem;
 using MusicEventNameSpace;
+using UnityEngine.Animations;
+using UnityEngine.Rendering;
 
 public class AudioTransform : MonoBehaviour
 {
@@ -62,12 +64,15 @@ public class AudioTransform : MonoBehaviour
     public GameObject bottomLight;
 
     private EventEmitter emitter;
+    private List<ParticleSystem> ADDList = new List<ParticleSystem>();
 
     void Start()
     {
         // initial emitter
         emitter = new EventEmitter();
         emitter.getEventList();
+
+        finalPose();
     }
 
     // Update is called once per frame
@@ -105,33 +110,57 @@ public class AudioTransform : MonoBehaviour
         }
 
         processEmitter();
-        //UpdateCurveVelocity();
-        //UpdataSubCircleVelocity();
-        //shakeCurveLeftRight(5, 2);
-        // shakeCurveLeftRightBy2(5, 2);
-        // shakeCurveLeftRightBy4(5, 2);
-        // shakeCurveLeftRightCross(5, 2);
-        // updateCurveBySin();
-        // Debug.Log(Time.time);
-        //setInnerMainCircleVelocity(1);
-        //stopMainCurve();
-        //mainCircleIncline(true);
-        //mainCircleInclineTangent();
-        //updateMainCircleDirection();
-        //stopCurve2();
-        // stopCurve2();
-        // stopMainCircle(true, true);
-        // setInnerMainCircleVelocity(0);
-        // stopSubCircle(true, true);
         audioAttribute();
-        
+
+        Debug.Log(Time.time);
+    }
+    public void finalPose()
+    {
+        stopMainCircle(true, true);
+        stopSubCircle(true, true);
+        stopCurve1();
+        stopCurve2();
+        ParticleSystem A1 = buildFountain(new Vector3(0, 0, 150), 15, 400);
+        ParticleSystem A2 = buildFountain(new Vector3(0, 0, 50), 15, 400);
+        ParticleSystem A3 = buildFountain(new Vector3(0, 130, 175), 8, 400);
+        A1.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.1f));
+        A2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, 0.1f));
+        A3.transform.rotation = Quaternion.LookRotation(Vector3.up * 2 + new Vector3(0, 0, -2f));
+
+        ParticleSystem D1 = buildFountain(new Vector3(0, 0, 0), 15, 400);
+        ParticleSystem D2 = buildFountain(new Vector3(0, 200, 0), 5, 400, 4);
+        D2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
+
+        ParticleSystem D4 = buildFountain(new Vector3(0, 0, -100), 15, 400);
+        ParticleSystem D5 = buildFountain(new Vector3(0, 200, -100), 5, 400, 4);
+        D5.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
+
+        ADDList.Add(A1);
+        ADDList.Add(A2);
+        ADDList.Add(A3);
+        ADDList.Add(D1);
+        ADDList.Add(D2);
+        ADDList.Add(D4);
+        ADDList.Add(D5);
+        stopADD();
+    }
+
+    private void activateFinalPose()
+    {
+        int len = ADDList.Count;
+        for (int i = 0; i < len; i++)
+        {
+            ParticleSystem particle = ADDList[i];
+            ParticleSystem.EmissionModule emission = particle.emission;
+            ParticleSystem.MainModule main = particle.main;
+            emission.enabled = true;
+        }
     }
 
     public void processEmitter()
     {
         if (emitter.eventList.Count == 0)
         {
-            shakeCurveLeftRight(5, 2);
             return;
         }
         if (Time.time < emitter.eventList[0].duration)
@@ -148,16 +177,110 @@ public class AudioTransform : MonoBehaviour
         switch (emitter.currentStatus)
         {
             case "A":
-                updateCurveBySin();
+                shakeCurveLeftRightBy2(2, 2);
+                stopCurve2();
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
                 break;
             case "B":
-                shakeCurveLeftRightBy2(5, 2);
+                shakeCurveLeftRightBy2(2, 2, false);
+                stopCurve2();
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
                 break;
-            case "C":
-                shakeCurveLeftRightBy4(5, 2);
+            case "C1":
+                startEmit(true, true, false, false, false, false);
+                crossCurveLeftRightBy2(5, 2, 0);
+                setCurve2Velocity(8);
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "C2":
+                startEmit(true, true, false, false, false, false);
+                crossCurveLeftRightBy2(5, 2, 1);
+                setCurve2Velocity(8);
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "C3":
+                startEmit(true, true, false, false, false, false);
+                crossCurveLeftRightBy2(5, 2, 2);
+                setCurve2Velocity(8);
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "D1":
+                shakeCurveLeftRightBy4(3, 2, 2);
+                stopCurve2();
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "D2":
+                shakeCurveLeftRightBy4(3, 2, 1);
+                stopCurve2();
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "D3":
+                shakeCurveLeftRightBy4(3, 2, 0);
+                stopCurve2();
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "E":
+                setDirectionUpCurve1();
+                fixedCurveBySin();
+                stopCurve2();
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "F":
+                setCurve1Velocity(12);
+                shakeCurveLeftRightCross(2, 2);
+                stopCurve2();
+                stopMainCircle(true, true);
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "G":
+                setMainCircleVelocity(10);
+                mainCircleInclineDynamic();
+                spiltCurveLeftRight(2, 2);
+                stopCurve2();
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "H":
+                mainCircleInclineTangent();
+                setSubCircleVelocity1(12);
+                setSubCircleVelocity2(12);
+                stopCurve2();
+                stopCurve1();
+                stopADD();
+                break;
+            case "I":
+                mainCircleIncline();
+                innerMainCircleSin();
+                stopCurve2();
+                stopCurve1();
+                stopSubCircle(true, true);
+                stopADD();
+                break;
+            case "FINAL":
+                stopMainCircle(true, true);
+                activateFinalPose();
                 break;
             default:
-                shakeCurveLeftRight(5,2);
+                shakeCurveLeftRight(3, 2);
                 break;
         }
     }
@@ -174,7 +297,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    ParticleSystem buildFountain(Vector3 position, float speed = 3)
+    ParticleSystem buildFountain(Vector3 position, float speed = 3, float number = 50, float lifetime = 0)
     {
 
         GameObject particleSystemObject = Instantiate(particleSystemPrefab);
@@ -186,16 +309,33 @@ public class AudioTransform : MonoBehaviour
         particleSystem.transform.position = position;
         particleSystem.transform.localScale = new Vector3(10, 10, 10);
 
+        if (lifetime != 0)
+        {
+            mainModule.startLifetime = new ParticleSystem.MinMaxCurve(1.5f, lifetime);
+        }
+
         mainModule.startSpeed = speed;
 
         //bottomLightObj.transform.position = position;
 
         var emission = particleSystem.emission;
         emission.enabled = true;
-        emission.rateOverTime = 50;
+        emission.rateOverTime = number;
 
         particleSystem.Play();
         return particleSystem;
+    }
+
+    void stopADD()
+    {
+        int len = ADDList.Count;
+        for (int i = 0; i < len; i++)
+        {
+            ParticleSystem particle = ADDList[i];
+            ParticleSystem.EmissionModule emission = particle.emission;
+            ParticleSystem.MainModule main = particle.main;
+            emission.enabled = false;
+        }
     }
 
     // curve
@@ -207,6 +347,8 @@ public class AudioTransform : MonoBehaviour
         {
             ParticleSystem.MainModule main = curveFountain[i].main;
             main.startSpeed = 0;
+            ParticleSystem.EmissionModule emission = curveFountain[i].emission;
+            emission.enabled = false;
         }
     }
     void stopCurve2()
@@ -216,30 +358,116 @@ public class AudioTransform : MonoBehaviour
         {
             ParticleSystem.MainModule main = curveFountain2[i].main;
             main.startSpeed = 0;
+            ParticleSystem.EmissionModule emission = curveFountain2[i].emission;
+            emission.enabled = false;
+        }
+    }
+
+    void setDirectionUpCurve1()
+    {
+        int len = curveFountain.Count;
+        for (int i = 0; i < len; i++)
+        {
+            curveFountain[i].transform.rotation = Quaternion.LookRotation(Vector3.up);
+        }
+    }
+
+    void setCurve1Velocity(float speed = 3)
+    {
+        int len = curveFountain.Count;
+        for (int i = 0; i < len; i++)
+        {
+            ParticleSystem.MainModule main = curveFountain[i].main;
+            main.startSpeed = speed;
+        }
+    }
+
+    void setCurve2Velocity(float speed = 3)
+    {
+        int len = curveFountain2.Count;
+        for (int i = 0; i < len; i++)
+        {
+            ParticleSystem.MainModule main = curveFountain2[i].main;
+            ParticleSystem.EmissionModule emission = curveFountain2[i].emission;
+            emission.enabled = true;
+            main.startSpeed = speed;
         }
     }
     //左右喷射，微小摆动，两个一组，间隔四个，最后大家一起发射
     private float shakeCurveLeftRightBy2Timer;
-    void shakeCurveLeftRightBy2(float width, float velocity)
+    void shakeCurveLeftRightBy2(float width, float velocity, bool isRight = true)
     {
         int len = curveFountain.Count;
         shakeCurveLeftRightBy2Timer += Time.deltaTime * 1;
-        float sinValue = Mathf.Sin(shakeCurveLeftRightBy2Timer * velocity) * 0.1f;
         float radius = width;
+        Vector3 xzDirection = isRight ? new Vector3(0, 0, -1) : new Vector3(0, 0, 1);
+        Vector3 left = xzDirection.normalized * 0.5f;
         for (int i = 0; i < len; i++)
         {
             ParticleSystem fountain = curveFountain[i];
-                ParticleSystem.MainModule main = fountain.main;
-            if (i % 6 == 0 || i % 6 == 1)
+            ParticleSystem.MainModule main = fountain.main;
+            ParticleSystem.EmissionModule emission = fountain.emission;
+            if (i % 6 == 0)
             {
-                Vector3 xzDirection = new Vector3(0, 0, -1);
-                Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
-                main.startSpeed = 3;
+                main.startSpeed = 8;
+                emission.enabled = true;
+                float sinValue = Mathf.Sin(shakeCurveLeftRightBy2Timer * velocity) * 0.05f;
+
+                Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
+                fountain.transform.rotation = Quaternion.LookRotation(newDirection);
+            }
+            else if (i % 6 == 1)
+            {
+                main.startSpeed = 8;
+                emission.enabled = true;
+                float sinValue = Mathf.Sin(shakeCurveLeftRightBy2Timer * (velocity + 1)) * 0.05f;
+                Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
             else
             {
                 main.startSpeed = 0;
+                emission.enabled = false;
+            }
+
+        }
+    }
+
+    //�������䣬΢С�ڶ�������һ�飬����ĸ��������һ����
+    private float crossCurveLeftRightBy2Timer;
+    void crossCurveLeftRightBy2(float width, float velocity, int step = 0)
+    {
+        int len = curveFountain.Count;
+        crossCurveLeftRightBy2Timer += Time.deltaTime * 1;
+        float sinValue = Mathf.Sin(crossCurveLeftRightBy2Timer * velocity) * 0.05f;
+        float radius = width;
+        for (int i = 0; i < len; i++)
+        {
+            ParticleSystem fountain = curveFountain[i];
+            ParticleSystem.MainModule main = fountain.main;
+            ParticleSystem.EmissionModule emission = fountain.emission;
+            if (i % 6 == step)
+            {
+                emission.enabled = true;
+                Vector3 xzDirection = new Vector3(0, 0, -1);
+                Vector3 left = 0.3f * xzDirection.normalized;
+                main.startSpeed = 8;
+                Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
+                fountain.transform.rotation = Quaternion.LookRotation(newDirection);
+            }
+            else if (i % 6 == step + 1)
+            {
+                emission.enabled = true;
+                Vector3 xzDirection = new Vector3(0, 0, 1);
+                Vector3 right = 0.3f * xzDirection.normalized;
+                main.startSpeed = 8;
+                Vector3 newDirection = Vector3.up + right + sinValue * radius * xzDirection;
+                fountain.transform.rotation = Quaternion.LookRotation(newDirection);
+            }
+            else
+            {
+                main.startSpeed = 0;
+                emission.enabled = false;
             }
 
         }
@@ -249,33 +477,36 @@ public class AudioTransform : MonoBehaviour
     //左右喷射，微小摆动，四个一组，第三个比较高，间隔八个
 
     private float shakeCurveLeftRightBy4Timer;
-    void shakeCurveLeftRightBy4(float width, float velocity)
+    void shakeCurveLeftRightBy4(float width, float velocity, int step = 0)
     {
         int len = curveFountain.Count;
         shakeCurveLeftRightBy4Timer += Time.deltaTime * 1;
-        float sinValue = Mathf.Sin(shakeCurveLeftRightBy4Timer * velocity) * 0.1f;
         float radius = width;
         for (int i = 0; i < len; i++)
         {
             ParticleSystem fountain = curveFountain[i];
             ParticleSystem fountain2 = curveFountain2[i];
             ParticleSystem.MainModule main = fountain.main;
+            ParticleSystem.EmissionModule emission = fountain.emission;
             ParticleSystem.MainModule main2 = fountain2.main;
-            if (i % 10 == 0 || i % 10 == 1 || i % 10 == 2 || i % 10 == 3)
+            if (i % 10 == step || i % 10 == step + 1 || i % 10 == step + 2 || i % 10 == step + 3)
             {
+                float sinValue = Mathf.Sin(shakeCurveLeftRightBy4Timer * velocity + i) * 0.1f;
                 main2.startSpeed = 0;
                 Vector3 xzDirection = new Vector3(0, 0, -1);
                 Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
-                main.startSpeed = 3f;
+                emission.enabled = true;
+                main.startSpeed = 8f;
                 if (i % 10 == 2)
                 {
-                    main.startSpeed = 4f;
+                    main.startSpeed = 10f;
                 }
             }
             else
             {
                 main.startSpeed = 0;
+                emission.enabled = false;
                 main2.startSpeed = 2;
 
             }
@@ -296,18 +527,20 @@ public class AudioTransform : MonoBehaviour
         {
             ParticleSystem fountain = curveFountain[i];
             ParticleSystem.MainModule main = fountain.main;
-            main.startSpeed = 3f;
+            ParticleSystem.EmissionModule emission = fountain.emission;
+            emission.enabled = true;
+            main.startSpeed = 8f;
             if (i % 8 == 0 || i % 8 == 1 || i % 8 == 2 || i % 8 == 3)
             {
                 Vector3 xzDirection = new Vector3(0, 0, -1);
-                Vector3 left = xzDirection.normalized;
+                Vector3 left = xzDirection.normalized * 0.3f;
                 Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
             else
             {
                 Vector3 xzDirection = new Vector3(0, 0, 1);
-                Vector3 right = xzDirection.normalized;
+                Vector3 right = xzDirection.normalized * 0.3f;
                 Vector3 newDirection = Vector3.up + right + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
@@ -329,21 +562,55 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
+    void fixedCurveBySin()
+    {
+        int len = curveMainList.Count;
+        for (int i = 0; i < len; i++)
+        {
+            float sinValue = Math.Abs(Mathf.Sin((float)(i * Math.PI / 6)) * 3);
+            ParticleSystem.MainModule v = curveMainList[i];
+            ParticleSystem fountain = curveFountain[i];
+            ParticleSystem.EmissionModule emission = fountain.emission;
+            emission.enabled = true;
+            v.startSpeed = 8 + sinValue;
+        }
+    }
+    
     //全部左右摇摆
     private float shakeCurveLeftRightTimer;
     void shakeCurveLeftRight(float width, float velocity)
     {
         int len = curveFountain.Count;
         shakeCurveLeftRightTimer += Time.deltaTime * 1;
-        float sinValue = Mathf.Sin(shakeCurveLeftRightTimer * velocity) * 0.1f;
+        float radius = width;
+        for (int i = 0; i < len; i++)
+        {
+            float sinValue = Mathf.Sin(shakeCurveLeftRightTimer * velocity + i) * 0.1f;
+            ParticleSystem fountain = curveFountain[i];
+            ParticleSystem.MainModule main = fountain.main;
+            ParticleSystem.EmissionModule emission = fountain.emission;
+            emission.enabled = true;
+            main.startSpeed = 8f;
+            Vector3 xzDirection = new Vector3(0, 0, -1);
+            Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
+            fountain.transform.rotation = Quaternion.LookRotation(newDirection);
+        }
+    }
+
+    
+    void spiltCurveLeftRight(float width, float velocity)
+    {
+        int len = curveFountain.Count;
         float radius = width;
         for (int i = 0; i < len; i++)
         {
             ParticleSystem fountain = curveFountain[i];
             ParticleSystem.MainModule main = fountain.main;
-            main.startSpeed = 3f;
-            Vector3 xzDirection = new Vector3(0, 0, -1);
-            Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
+            ParticleSystem.EmissionModule emission = fountain.emission;
+            emission.enabled = true;
+            main.startSpeed = 8f;
+            Vector3 xzDirection = i < len / 2 ? new Vector3(0, 0, 1) * 0.2f : new Vector3(0, 0, -1) * 0.2f;
+            Vector3 newDirection = Vector3.up + radius * xzDirection;
             fountain.transform.rotation = Quaternion.LookRotation(newDirection);
         }
     }
@@ -358,11 +625,15 @@ public class AudioTransform : MonoBehaviour
             if (inner)
             {
                 ParticleSystem.MainModule main = mainCircleFounatin[i].main;
+                ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
+                emission.enabled = false;
                 main.startSpeed = 0;
             }
             if (outside)
             {
                 ParticleSystem.MainModule main = innerMainCircleFounatin[i].main;
+                ParticleSystem.EmissionModule emission = innerMainCircleFounatin[i].emission;
+                emission.enabled = false;
                 main.startSpeed = 0;
             }
 
@@ -370,16 +641,17 @@ public class AudioTransform : MonoBehaviour
     }
     // �⻷����/����
 
-    private float mainCircleInclineOutsideTimer;
     void mainCircleIncline(bool outside = true)
     {
-        mainCircleInclineOutsideTimer += Time.deltaTime * 1;
-        float sinValue = Math.Abs(Mathf.Sin(mainCircleInclineOutsideTimer * 1) * 0.1f);
         int len = mainCircleFounatin.Count;
         float radius = 0.5f;
         for (int i = 0; i < len; i++)
         {
             Vector3 xzDirection;
+            ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
+            ParticleSystem.MainModule main = mainCircleFounatin[i].main;
+            emission.enabled = true;
+            main.startSpeed = 8;
             if (outside)
             {
                 xzDirection = -1 * (circleCenterMain - mainCircleTransform[i].position).normalized;
@@ -395,7 +667,47 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ����СȦ�ٶ�
+    private float innerMainCircleSinTimer;
+    void innerMainCircleSin()
+    {
+        innerMainCircleSinTimer += Time.deltaTime * 1;
+        int len = innerMainCircleFounatin.Count;
+        for (int i = 0; i < len; i++)
+        {
+            float sinValue = Check(Mathf.Sin((float)((i + innerMainCircleSinTimer) * Math.PI / 6)) * 3);
+            ParticleSystem.MainModule v = innerMainCircleFounatin[i].main;
+            ParticleSystem.EmissionModule emission = innerMainCircleFounatin[i].emission;
+            emission.enabled = true;
+            v.startSpeed = 8 + sinValue;
+        }
+    }
+
+    private float mainCircleInclineDynamicTimer;
+    void mainCircleInclineDynamic(bool outside = true)
+    {
+        mainCircleInclineDynamicTimer += Time.deltaTime * 1;
+        float sinValue = Math.Abs(Mathf.Sin(mainCircleInclineDynamicTimer * 1));
+        int len = mainCircleFounatin.Count;
+        float radius = 0.5f;
+        for (int i = 0; i < len; i++)
+        {
+            Vector3 xzDirection;
+            ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
+            ParticleSystem.MainModule main = mainCircleFounatin[i].main;
+            emission.enabled = true;
+            main.startSpeed = 8;
+
+            xzDirection = (circleCenterMain - mainCircleTransform[i].position).normalized;
+
+            Vector3 outDir = xzDirection * -1f;
+
+
+            Vector3 newDirection = Vector3.up*2 + xzDirection * -0.2f + outDir * sinValue;
+            Console.WriteLine(newDirection.ToString());
+            mainCircleTransform[i].rotation = Quaternion.LookRotation(newDirection);
+        }
+    }
+
     void setInnerMainCircleVelocity(float speed = 1)
     {
         int len = innerMainCircleFounatin.Count;
@@ -406,8 +718,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ���ô�Ȧ�ٶ�
-    void setMainCircleVelocity(float speed = 3)
+    void setMainCircleVelocity(float speed = 4)
     {
         int len = mainCircleFounatin.Count;
         for (int i = 0; i < len; i++)
@@ -417,7 +728,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // ��Ȧҡ��
+    
     private float updateMainCircleDirectionTimer;
     void updateMainCircleDirection()
     {
@@ -450,8 +761,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // �����߷�����б
-
     private float mainCircleInclineTangentTimer;
     void mainCircleInclineTangent(bool outside = true)
     {
@@ -477,6 +786,9 @@ public class AudioTransform : MonoBehaviour
             {
                 ParticleSystem.MainModule main = subCircleFountain1[i].main;
                 main.startSpeed = 0;
+                ParticleSystem.EmissionModule emission = subCircleFountain1[i].emission;
+                emission.enabled = false;
+
             }
         }
         if (isSub2)
@@ -485,32 +797,37 @@ public class AudioTransform : MonoBehaviour
             {
                 ParticleSystem.MainModule main = subCircleFountain2[i].main;
                 main.startSpeed = 0;
+                ParticleSystem.EmissionModule emission = subCircleFountain2[i].emission;
+                emission.enabled = false;
             }
         }
 
     }
 
-    void setSubCircleVelocity1(float speed = 3)
+    void setSubCircleVelocity1(float speed = 8)
     {
         int len = subCircleFountain1.Count;
         for (int i = 0; i < len; i++)
         {
             ParticleSystem.MainModule main = subCircleFountain1[i].main;
+            ParticleSystem.EmissionModule emission = subCircleFountain1[i].emission;
+            emission.enabled = true;
             main.startSpeed = speed;
         }
     }
 
-    void setSubCircleVelocity2(float speed = 3)
+    void setSubCircleVelocity2(float speed = 8)
     {
         int len = subCircleFountain2.Count;
         for (int i = 0; i < len; i++)
         {
             ParticleSystem.MainModule main = subCircleFountain2[i].main;
+            ParticleSystem.EmissionModule emission = subCircleFountain2[i].emission;
+            emission.enabled = true;
             main.startSpeed = speed;
         }
     }
 
-    // СȦҡ��
     void updateSubCircleDirection1()
     {
         subTimer1 += Time.deltaTime * 1;
@@ -539,6 +856,65 @@ public class AudioTransform : MonoBehaviour
             subCircleTransform2[i].rotation = Quaternion.LookRotation(newDirection);
         }
     }
+
+    void startEmit(bool curve1, bool curve2, bool mainCircle1, bool mainCircle2, bool sub1, bool sub2)
+    {
+        if (curve1)
+        {
+            int len = curveFountain.Count;
+            for (int i = 0; i < len; i++)
+            {
+                ParticleSystem.EmissionModule emission = curveFountain[i].emission;
+                emission.enabled = true;
+            }
+        }
+        if (curve2)
+        {
+            int len = curveFountain2.Count;
+            for (int i = 0; i < len; i++)
+            {
+                ParticleSystem.EmissionModule emission = curveFountain2[i].emission;
+                emission.enabled = true;
+            }
+        }
+        if (mainCircle1)
+        {
+            int len = mainCircleFounatin.Count;
+            for (int i = 0; i < len; i++)
+            {
+                ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
+                emission.enabled = true;
+            }
+        }
+        if (mainCircle2)
+        {
+            int len = innerMainCircleFounatin.Count;
+            for (int i = 0; i < len; i++)
+            {
+                ParticleSystem.EmissionModule emission = innerMainCircleFounatin[i].emission;
+                emission.enabled = true;
+            }
+        }
+        if (sub1)
+        {
+            int len = subCircleFountain1.Count;
+            for (int i = 0; i < len; i++)
+            {
+                ParticleSystem.EmissionModule emission = subCircleFountain1[i].emission;
+                emission.enabled = true;
+            }
+        }
+        if (sub2)
+        {
+            int len = subCircleFountain2.Count;
+            for (int i = 0; i < len; i++)
+            {
+                ParticleSystem.EmissionModule emission = subCircleFountain2[i].emission;
+                emission.enabled = true;
+            }
+        }
+    }
+}
 
     public void audioAttribute()
     {
@@ -659,3 +1035,4 @@ public class AudioTransform : MonoBehaviour
         }
     }
 }
+

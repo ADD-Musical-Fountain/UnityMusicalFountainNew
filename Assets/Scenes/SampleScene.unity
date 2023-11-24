@@ -15589,7 +15589,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1317290504953022069, guid: 044c6db2cd347fd4e974ccf496b843c7, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1317290504953022069, guid: 044c6db2cd347fd4e974ccf496b843c7, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
@@ -15617,7 +15617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1317290504953022069, guid: 044c6db2cd347fd4e974ccf496b843c7, type: 3}
       propertyPath: InitialModule.gravityModifier.scalar
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1317290504953022069, guid: 044c6db2cd347fd4e974ccf496b843c7, type: 3}
       propertyPath: InitialModule.startSpeed.minMaxState

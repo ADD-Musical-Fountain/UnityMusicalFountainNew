@@ -23,9 +23,23 @@ namespace MusicEventNameSpace
         public List<MusicEvent> getEventList()
         {
             List<MusicEvent> list = new List<MusicEvent>();
-            list.Add(new MusicEvent(5, "A"));
-            list.Add(new MusicEvent(10, "B"));
-            list.Add(new MusicEvent(15, "C"));
+            list.Add(new MusicEvent(3, "A"));
+            list.Add(new MusicEvent(6, "B"));
+            list.Add(new MusicEvent(8, "C1"));
+            list.Add(new MusicEvent(10, "C2"));
+            list.Add(new MusicEvent(12, "C3"));
+            list.Add(new MusicEvent(14, "D1"));
+            list.Add(new MusicEvent(16, "D2"));
+            list.Add(new MusicEvent(18, "D3"));
+            list.Add(new MusicEvent(21, "E"));
+            list.Add(new MusicEvent(25, "F"));
+            list.Add(new MusicEvent(27, "D1"));
+            list.Add(new MusicEvent(29, "D2"));
+            list.Add(new MusicEvent(31, "D3"));
+            list.Add(new MusicEvent(35, "G"));
+            list.Add(new MusicEvent(40, "H"));
+            list.Add(new MusicEvent(45, "I"));
+            list.Add(new MusicEvent(55, "FINAL"));
             eventList = list;
             return list;
         }
