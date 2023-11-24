@@ -23,23 +23,24 @@ namespace MusicEventNameSpace
         public List<MusicEvent> getEventList()
         {
             List<MusicEvent> list = new List<MusicEvent>();
-            list.Add(new MusicEvent(3, "A"));
-            list.Add(new MusicEvent(6, "B"));
-            list.Add(new MusicEvent(8, "C1"));
-            list.Add(new MusicEvent(10, "C2"));
-            list.Add(new MusicEvent(12, "C3"));
-            list.Add(new MusicEvent(14, "D1"));
-            list.Add(new MusicEvent(16, "D2"));
-            list.Add(new MusicEvent(18, "D3"));
-            list.Add(new MusicEvent(21, "E"));
-            list.Add(new MusicEvent(25, "F"));
-            list.Add(new MusicEvent(27, "D1"));
-            list.Add(new MusicEvent(29, "D2"));
-            list.Add(new MusicEvent(31, "D3"));
-            list.Add(new MusicEvent(35, "G"));
-            list.Add(new MusicEvent(40, "H"));
-            list.Add(new MusicEvent(45, "I"));
-            list.Add(new MusicEvent(55, "FINAL"));
+            list.Add(new MusicEvent(5, "START"));
+            list.Add(new MusicEvent(8, "A"));
+            list.Add(new MusicEvent(11, "B"));
+            list.Add(new MusicEvent(13, "C1"));
+            list.Add(new MusicEvent(15, "C2"));
+            list.Add(new MusicEvent(17, "C3"));
+            list.Add(new MusicEvent(19, "D1"));
+            list.Add(new MusicEvent(21, "D2"));
+            list.Add(new MusicEvent(23, "D3"));
+            list.Add(new MusicEvent(26, "E"));
+            list.Add(new MusicEvent(30, "F"));
+            list.Add(new MusicEvent(32, "D1"));
+            list.Add(new MusicEvent(34, "D2"));
+            list.Add(new MusicEvent(36, "D3"));
+            list.Add(new MusicEvent(40, "G"));
+            list.Add(new MusicEvent(45, "H"));
+            list.Add(new MusicEvent(50, "I"));
+            list.Add(new MusicEvent(60, "FINAL"));
             eventList = list;
             return list;
         }

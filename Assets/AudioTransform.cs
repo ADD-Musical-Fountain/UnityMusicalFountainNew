@@ -9,6 +9,8 @@ using static UnityEngine.ParticleSystem;
 using MusicEventNameSpace;
 using UnityEngine.Animations;
 using UnityEngine.Rendering;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class AudioTransform : MonoBehaviour
 {
@@ -46,6 +48,8 @@ public class AudioTransform : MonoBehaviour
     int subCircleNum = 32;
     int curveNum = 32;
 
+    float volume;
+
     private List<float> frequencyBands = new List<float>();
     public Material trailMaterial;
     public Mesh[] meshes;
@@ -57,7 +61,7 @@ public class AudioTransform : MonoBehaviour
     public float particleLifetime = 1f;
     public float particleSpread = 0.2f;
 
-    
+    private Stopwatch stopwatch;
 
     public GameObject particleSystemPrefab;
     // public GameObject particleSystemPrefabBottom;
@@ -78,9 +82,11 @@ public class AudioTransform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        if (curveControlPoint.Count < 4) {
-            if (Input.GetMouseButtonDown(0)) {
+
+        if (curveControlPoint.Count < 4)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
@@ -96,23 +102,28 @@ public class AudioTransform : MonoBehaviour
                     ParticleSystem splas = splasObejct.GetComponent<ParticleSystem>();
                     splas.transform.position = hit.point;
                     splas.Play();
-                    Debug.Log("the position of selected control point:"+hit.point);
+                    Debug.Log("the position of selected control point:" + hit.point);
                 }
             }
         }
-        if (curveControlPoint.Count == 4 && startPlay == false) {
+        if (curveControlPoint.Count == 4 && startPlay == false)
+        {
             generateCurveFountain();
+            generateCurve2Fountain();
             generateSubCircleFountain();
             generateMainCircleFountain();
             startPlay = true;
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
             // delay to play audio
+            finalPose();
             thisAudioSource.PlayDelayed(2f);
         }
 
         processEmitter();
         audioAttribute();
-
-        Debug.Log(Time.time);
+        double elapsed = stopwatch.Elapsed.TotalSeconds;
+        Debug.Log(elapsed);
     }
     public void finalPose()
     {
@@ -163,7 +174,7 @@ public class AudioTransform : MonoBehaviour
         {
             return;
         }
-        if (Time.time < emitter.eventList[0].duration)
+        if (stopwatch.Elapsed.TotalSeconds < emitter.eventList[0].duration)
         {
             if (emitter.eventList[0].name != emitter.currentStatus)
             {
@@ -176,6 +187,14 @@ public class AudioTransform : MonoBehaviour
         }
         switch (emitter.currentStatus)
         {
+            case "START":
+                setCurve1Velocity(8);
+                setCurve2Velocity(8);
+                setMainCircleVelocity(8);
+                setInnerMainCircleVelocity(8);
+                setSubCircleVelocity1(8);
+                setSubCircleVelocity2(8);
+                break;
             case "A":
                 shakeCurveLeftRightBy2(2, 2);
                 stopCurve2();
@@ -191,7 +210,6 @@ public class AudioTransform : MonoBehaviour
                 stopADD();
                 break;
             case "C1":
-                startEmit(true, true, false, false, false, false);
                 crossCurveLeftRightBy2(5, 2, 0);
                 setCurve2Velocity(8);
                 stopMainCircle(true, true);
@@ -199,7 +217,6 @@ public class AudioTransform : MonoBehaviour
                 stopADD();
                 break;
             case "C2":
-                startEmit(true, true, false, false, false, false);
                 crossCurveLeftRightBy2(5, 2, 1);
                 setCurve2Velocity(8);
                 stopMainCircle(true, true);
@@ -207,7 +224,6 @@ public class AudioTransform : MonoBehaviour
                 stopADD();
                 break;
             case "C3":
-                startEmit(true, true, false, false, false, false);
                 crossCurveLeftRightBy2(5, 2, 2);
                 setCurve2Velocity(8);
                 stopMainCircle(true, true);
@@ -264,19 +280,22 @@ public class AudioTransform : MonoBehaviour
                 setSubCircleVelocity1(12);
                 setSubCircleVelocity2(12);
                 stopCurve2();
-                stopCurve1();
+                setDirectionUpCurve1();
+                setCurve1Velocity(8);
                 stopADD();
                 break;
             case "I":
                 mainCircleIncline();
                 innerMainCircleSin();
                 stopCurve2();
-                stopCurve1();
+                setDirectionUpCurve1();
+                setCurve1Velocity(8);
                 stopSubCircle(true, true);
                 stopADD();
                 break;
             case "FINAL":
                 stopMainCircle(true, true);
+                stopCurve1();
                 activateFinalPose();
                 break;
             default:
@@ -575,7 +594,7 @@ public class AudioTransform : MonoBehaviour
             v.startSpeed = 8 + sinValue;
         }
     }
-    
+
     //全部左右摇摆
     private float shakeCurveLeftRightTimer;
     void shakeCurveLeftRight(float width, float velocity)
@@ -597,7 +616,7 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    
+
     void spiltCurveLeftRight(float width, float velocity)
     {
         int len = curveFountain.Count;
@@ -702,7 +721,7 @@ public class AudioTransform : MonoBehaviour
             Vector3 outDir = xzDirection * -1f;
 
 
-            Vector3 newDirection = Vector3.up*2 + xzDirection * -0.2f + outDir * sinValue;
+            Vector3 newDirection = Vector3.up * 2 + xzDirection * -0.2f + outDir * sinValue;
             Console.WriteLine(newDirection.ToString());
             mainCircleTransform[i].rotation = Quaternion.LookRotation(newDirection);
         }
@@ -714,6 +733,8 @@ public class AudioTransform : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             ParticleSystem.MainModule main = innerMainCircleFounatin[i].main;
+            ParticleSystem.EmissionModule emission = innerMainCircleFounatin[i].emission;
+            emission.enabled = true;
             main.startSpeed = speed;
         }
     }
@@ -724,11 +745,13 @@ public class AudioTransform : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             ParticleSystem.MainModule main = mainCircleFounatin[i].main;
+            ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
+            emission.enabled = true;
             main.startSpeed = speed;
         }
     }
 
-    
+
     private float updateMainCircleDirectionTimer;
     void updateMainCircleDirection()
     {
@@ -922,17 +945,20 @@ public class AudioTransform : MonoBehaviour
         // frequency bands
         int frequencyBandsNum = 8;
         int sampleCount = 1024 / frequencyBandsNum;
-        float volume = 0;
+        volume = 0;
         for (int i = 0; i < frequencyBandsNum; i++)
         {
             float average = 0;
             for (int j = i * sampleCount; j < (i + 1) * sampleCount; j++)
             {
-                average = average + spectrumData[j]*j;
+                average = average + spectrumData[j] * j;
             }
-            if (frequencyBands.Count < frequencyBandsNum) {
+            if (frequencyBands.Count < frequencyBandsNum)
+            {
                 frequencyBands.Add(average);
-            } else {
+            }
+            else
+            {
                 frequencyBands[i] = average;
             }
             volume += frequencyBands[i];
@@ -945,20 +971,21 @@ public class AudioTransform : MonoBehaviour
         Vector3 c = curveControlPoint[2];
         Vector3 d = curveControlPoint[3];
 
-        float B0 = (1-t)*(1-t)*(1-t); 
-        float B1 = 3*t*(1-t)*(1-t); 
-        float B2 = 3*t*t*(1-t); 
-        float B3 = t*t*t; 
+        float B0 = (1 - t) * (1 - t) * (1 - t);
+        float B1 = 3 * t * (1 - t) * (1 - t);
+        float B2 = 3 * t * t * (1 - t);
+        float B3 = t * t * t;
 
-        float x = B0 * a[0] + B1* b[0] + B2*c[0] +B3*d[0];
-        float z = B0 * a[2] + B1* b[2] + B2*c[2] +B3*d[2];
+        float x = B0 * a[0] + B1 * b[0] + B2 * c[0] + B3 * d[0];
+        float z = B0 * a[2] + B1 * b[2] + B2 * c[2] + B3 * d[2];
         float y = 0;
-        Vector3 position = new Vector3(x,y,z);
+        Vector3 position = new Vector3(x, y, z);
         return position;
     }
     public void generateCurveFountain()
     {
-        for (int i = 0; i < curveNum; i++) {
+        for (int i = 0; i < curveNum; i++)
+        {
             float t = (i * 1.0f) / curveNum;
             Vector3 posi = cubicBezier(t);
             ParticleSystem fountain = buildFountain(posi);
@@ -966,16 +993,28 @@ public class AudioTransform : MonoBehaviour
             curveFountain.Add(fountain);
         }
     }
+
+    public void generateCurve2Fountain()
+    {
+        for (int i = 0; i < curveNum; i++)
+        {
+            float t = (i * 1.0f) / curveNum;
+            Vector3 posi = cubicBezier(t);
+            ParticleSystem fountain = buildFountain(posi);
+            curveFountain2.Add(fountain);
+        }
+    }
     public void generateSubCircleFountain()
-    {   
+    {
         float angle = 0f;
         float angleStep = 360f / (subCircleNum);
         float subCircleRadius = 50f;
 
-        Vector3 subCircleStartPos1 = new Vector3((curveControlPoint[0][0]+curveControlPoint[1][0])/2, 0,  (curveControlPoint[0][2]+curveControlPoint[1][2])/2);
+        Vector3 subCircleStartPos1 = new Vector3((curveControlPoint[0][0] + curveControlPoint[1][0]) / 2, 0, (curveControlPoint[0][2] + curveControlPoint[1][2]) / 2);
         circleCenterSub1 = subCircleStartPos1;
 
-        for (int i = 0; i < subCircleNum; i++) {
+        for (int i = 0; i < subCircleNum; i++)
+        {
             float x = Mathf.Sin(Mathf.Deg2Rad * angle) * subCircleRadius;
             float z = Mathf.Cos(Mathf.Deg2Rad * angle) * subCircleRadius;
             Vector3 posi = new Vector3(x, 0, z);
@@ -983,11 +1022,11 @@ public class AudioTransform : MonoBehaviour
             subCircleTransform1.Add(fountain.transform);
             subCircleFountain1.Add(fountain);
             angle += angleStep;
-            Debug.Log("sub circle fountain position:"+posi);
+            Debug.Log("sub circle fountain position:" + posi);
         }
 
         angle = 0f;
-        Vector3 subCircleStartPos2 = new Vector3((curveControlPoint[2][0]+curveControlPoint[3][0])/2, 0,  (curveControlPoint[2][2]+curveControlPoint[3][2])/2);
+        Vector3 subCircleStartPos2 = new Vector3((curveControlPoint[2][0] + curveControlPoint[3][0]) / 2, 0, (curveControlPoint[2][2] + curveControlPoint[3][2]) / 2);
         circleCenterSub2 = subCircleStartPos2;
         for (int i = 0; i < subCircleNum; i++)
         {
@@ -1001,12 +1040,12 @@ public class AudioTransform : MonoBehaviour
         }
     }
     public void generateMainCircleFountain()
-    {   
+    {
         float angle = 0f;
         float angleStep = 360f / (mainCircleNum);
         float mainCircleRadius = 80f;
 
-        Vector3 mainCircleSratPos = new Vector3((curveControlPoint[1][0]+curveControlPoint[2][0])/2, 0,  (curveControlPoint[1][2]+curveControlPoint[2][2])/2);
+        Vector3 mainCircleSratPos = new Vector3((curveControlPoint[1][0] + curveControlPoint[2][0]) / 2, 0, (curveControlPoint[1][2] + curveControlPoint[2][2]) / 2);
         circleCenterMain = mainCircleSratPos;
 
         for (int i = 0; i < mainCircleNum; i++)
