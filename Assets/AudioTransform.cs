@@ -8,7 +8,8 @@ using UnityEngine.Animations;
 using UnityEngine.Rendering;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
-
+using System.Collections.Generic;
+using ELSNameSpace;
 
 public class AudioTransform : MonoBehaviour
 {
@@ -67,13 +68,20 @@ public class AudioTransform : MonoBehaviour
 
     private EventEmitter emitter;
     private List<ParticleSystem> ADDList = new List<ParticleSystem>();
+    private ExplosionLauncherSystem explosion;
 
     void Start()
     {
         // initial emitter
         emitter = new EventEmitter();
         emitter.getEventList();
-
+        explosion = gameObject.AddComponent<ExplosionLauncherSystem>();
+        explosion.initialSetup(4);
+        // explosion.transform.position = Vector3.zero;
+        explosion.Activate(0, new Vector3(40, 10, 0), ParticleType.FIRE);
+        explosion.Activate(1, new Vector3(0, 10, -40), ParticleType.ICE);
+        explosion.Activate(2, new Vector3(-40, 10, 0), ParticleType.FIRE);
+        explosion.Activate(3, new Vector3(0, 10, 40), ParticleType.ICE);
         finalPose();
     }
 
@@ -125,6 +133,7 @@ public class AudioTransform : MonoBehaviour
         Debug.Log(volume);
     }
     public void finalPose()
+
     {
         stopMainCircle(true, true);
         stopSubCircle(true, true);
@@ -297,6 +306,10 @@ public class AudioTransform : MonoBehaviour
                 stopMainCircle(true, true);
                 stopCurve1();
                 activateFinalPose();
+                explosion.EmitParticle(0);
+                explosion.EmitParticle(1);
+                explosion.EmitParticle(2);
+                explosion.EmitParticle(3);
                 break;
             default:
                 shakeCurveLeftRight(3, 2);

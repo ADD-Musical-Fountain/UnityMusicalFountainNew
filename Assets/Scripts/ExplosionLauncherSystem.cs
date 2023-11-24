@@ -20,7 +20,6 @@ namespace ELSNameSpace
 
     public class ExplosionLauncherSystem : MonoBehaviour
     {
-        [SerializeField]
         public int amount;
 
         private ParticleType[] typelist;
@@ -36,6 +35,13 @@ namespace ELSNameSpace
         // Start is called before the first frame update
         void Start()
         {
+
+        }
+
+        public void initialSetup(int a)
+        {
+            amount = a;
+
             if (amount <= 3)
                 amount = 4;
             if (amount % 2 == 1)
@@ -53,26 +59,10 @@ namespace ELSNameSpace
 
             typelist = GenerateTypeArray(amount);
 
-            Activate(0, new Vector3(40, 10, 0), ParticleType.FIRE);
-            Activate(1, new Vector3(0, 10, -40), ParticleType.ICE);
-            Activate(2, new Vector3(-40, 10, 0), ParticleType.FIRE);
-            Activate(3, new Vector3(0, 10, 40), ParticleType.ICE);
-
             states = new State[amount];
-            for(int i = 0; i < amount; i++)
-            {
-                launchers[i].GetComponent<MeshRenderer>().material.SetFloat("_DissolveRatio", 3.2f);
-                states[i] = State.IDLE;
-            }
 
             appear_speed = 0.008f;
             disappear_speed = 0.008f;
-
-            EmitParticle(0);
-            EmitParticle(1);
-            EmitParticle(2);
-            EmitParticle(3);
-
         }
 
         public void Activate(int index, Vector3 pos, ParticleType type)
@@ -83,7 +73,8 @@ namespace ELSNameSpace
             t.Item1.transform.parent = transform;
             launchers[index] = t.Item1;
             particlesystems[index] = t.Item2;
-
+            launchers[index].GetComponent<MeshRenderer>().material.SetFloat("_DissolveRatio", 3.2f);
+            states[index] = State.IDLE;
         }
 
         public void EmitParticle(int index)
