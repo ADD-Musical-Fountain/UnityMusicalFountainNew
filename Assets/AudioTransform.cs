@@ -123,7 +123,8 @@ public class AudioTransform : MonoBehaviour
         processEmitter();
         audioAttribute();
         double elapsed = stopwatch.Elapsed.TotalSeconds;
-        Debug.Log(elapsed);
+        // Debug.Log(elapsed);
+        Debug.Log(volume);
     }
     public void finalPose()
     {
@@ -164,6 +165,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem particle = ADDList[i];
             ParticleSystem.EmissionModule emission = particle.emission;
             ParticleSystem.MainModule main = particle.main;
+            main.startColor = new ParticleSystem.MinMaxGradient(Color.black, Color.black);
             emission.enabled = true;
         }
     }
@@ -452,7 +454,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    //�������䣬΢С�ڶ�������һ�飬����ĸ��������һ����
     private float crossCurveLeftRightBy2Timer;
     void crossCurveLeftRightBy2(float width, float velocity, int step = 0)
     {
@@ -658,7 +659,6 @@ public class AudioTransform : MonoBehaviour
 
         }
     }
-    // �⻷����/����
 
     void mainCircleIncline(bool outside = true)
     {
@@ -877,64 +877,6 @@ public class AudioTransform : MonoBehaviour
             Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
             Console.WriteLine(newDirection.ToString());
             subCircleTransform2[i].rotation = Quaternion.LookRotation(newDirection);
-        }
-    }
-
-    void startEmit(bool curve1, bool curve2, bool mainCircle1, bool mainCircle2, bool sub1, bool sub2)
-    {
-        if (curve1)
-        {
-            int len = curveFountain.Count;
-            for (int i = 0; i < len; i++)
-            {
-                ParticleSystem.EmissionModule emission = curveFountain[i].emission;
-                emission.enabled = true;
-            }
-        }
-        if (curve2)
-        {
-            int len = curveFountain2.Count;
-            for (int i = 0; i < len; i++)
-            {
-                ParticleSystem.EmissionModule emission = curveFountain2[i].emission;
-                emission.enabled = true;
-            }
-        }
-        if (mainCircle1)
-        {
-            int len = mainCircleFounatin.Count;
-            for (int i = 0; i < len; i++)
-            {
-                ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
-                emission.enabled = true;
-            }
-        }
-        if (mainCircle2)
-        {
-            int len = innerMainCircleFounatin.Count;
-            for (int i = 0; i < len; i++)
-            {
-                ParticleSystem.EmissionModule emission = innerMainCircleFounatin[i].emission;
-                emission.enabled = true;
-            }
-        }
-        if (sub1)
-        {
-            int len = subCircleFountain1.Count;
-            for (int i = 0; i < len; i++)
-            {
-                ParticleSystem.EmissionModule emission = subCircleFountain1[i].emission;
-                emission.enabled = true;
-            }
-        }
-        if (sub2)
-        {
-            int len = subCircleFountain2.Count;
-            for (int i = 0; i < len; i++)
-            {
-                ParticleSystem.EmissionModule emission = subCircleFountain2[i].emission;
-                emission.enabled = true;
-            }
         }
     }
 
