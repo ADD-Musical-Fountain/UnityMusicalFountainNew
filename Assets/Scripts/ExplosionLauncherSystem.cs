@@ -21,16 +21,12 @@ namespace ELSNameSpace
     public class ExplosionLauncherSystem : MonoBehaviour
     {
         public int amount;
-
-        private ParticleType[] typelist;
         private GameObject[] launchers;
         private ParticleSystem[] particlesystems;
-        private Queue launch_time_table;
+        private State[] states;
 
         private float appear_speed;
         private float disappear_speed;
-
-        private State[] states;
 
         // Start is called before the first frame update
         void Start()
@@ -55,14 +51,11 @@ namespace ELSNameSpace
 
             launchers = new GameObject[amount];
             particlesystems = new ParticleSystem[amount];
-            launch_time_table = Constants.GetLaunchTimeTable();
-
-            typelist = GenerateTypeArray(amount);
 
             states = new State[amount];
 
-            appear_speed = 0.008f;
-            disappear_speed = 0.008f;
+            appear_speed = 0.006f;
+            disappear_speed = 0.006f;
         }
 
         public void Activate(int index, Vector3 pos, ParticleType type)
@@ -150,9 +143,9 @@ namespace ELSNameSpace
             var main = s.main;
             main.duration = 2.0f;
             main.loop = true;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(5.0f, 10.0f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(22.0f, 25.0f);
-            main.startSize = new ParticleSystem.MinMaxCurve(3.0f, 4.5f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(3.0f, 5.0f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(15.0f, 18.0f);
+            main.startSize = new ParticleSystem.MinMaxCurve(5.0f, 6.5f);
             main.maxParticles = 100;
 
             var emission = s.emission;

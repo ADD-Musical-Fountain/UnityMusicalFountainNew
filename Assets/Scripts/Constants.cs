@@ -16,19 +16,4 @@ public static class Constants
         Mesh mesh = Object.Instantiate(obj.GetComponent<MeshFilter>().mesh);
         return mesh;
     }
-
-    public static Queue GetLaunchTimeTable()
-    {
-        Queue q = new Queue();
-        q.Enqueue(5);
-        q.Enqueue(10);
-        q.Enqueue(15);
-        q.Enqueue(20);
-        q.Enqueue(25);
-        q.Enqueue(30);
-        q.Enqueue(35);
-        q.Enqueue(40);
-
-        return q;
-    }
 }
