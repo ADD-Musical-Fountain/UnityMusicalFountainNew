@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace ELSNameSpace
 {
@@ -143,9 +144,9 @@ namespace ELSNameSpace
             var main = s.main;
             main.duration = 2.0f;
             main.loop = true;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(3.0f, 5.0f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(15.0f, 18.0f);
-            main.startSize = new ParticleSystem.MinMaxCurve(5.0f, 6.5f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(3.0f, 4.0f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(30.0f, 40.0f);
+            main.startSize = new ParticleSystem.MinMaxCurve(2.0f, 2.5f);
             main.maxParticles = 100;
 
             var emission = s.emission;
@@ -159,14 +160,20 @@ namespace ELSNameSpace
             if (type == ParticleType.FIRE)
             {
                 renderer2.material = Resources.Load<Material>("shaders/FireParticle");
-                renderer2.trailMaterial = Resources.Load<Material>("shaders/FireExplosionParticle");
+                renderer2.trailMaterial = Resources.Load<Material>("shaders/BetterTrailFire");
+                var colors = Constants.GetFireColors();
+                renderer2.trailMaterial.SetVector("_TrailColor1", colors.Item1);
+                renderer2.trailMaterial.SetVector("_TrailColor2", colors.Item2);
                 renderer2.renderMode = ParticleSystemRenderMode.Mesh;
                 renderer2.mesh = Constants.GetSphereMesh();
             }
             else if (type == ParticleType.ICE)
             {
                 renderer2.material = Resources.Load<Material>("shaders/IceParticle");
-                renderer2.trailMaterial = Resources.Load<Material>("shaders/IceTrail");
+                renderer2.trailMaterial = Resources.Load<Material>("shaders/BetterTrailIce");
+                var colors = Constants.GetIceColors();
+                renderer2.trailMaterial.SetVector("_TrailColor1", colors.Item1);
+                renderer2.trailMaterial.SetVector("_TrailColor2", colors.Item2);
                 renderer2.renderMode = ParticleSystemRenderMode.Mesh;
                 renderer2.mesh = Constants.GetSphereMesh();
             }
@@ -175,7 +182,7 @@ namespace ELSNameSpace
             trail.enabled = true;
             trail.mode = ParticleSystemTrailMode.PerParticle;
             trail.ratio = 1.0f;
-            trail.lifetime = 0.05f;
+            trail.lifetime = 0.6f;
             trail.minVertexDistance = 1.0f;
 
             AnimationCurve curve = new AnimationCurve();
@@ -198,20 +205,33 @@ namespace ELSNameSpace
         {
             GameObject obj = new GameObject("sub");
             ParticleSystem p = obj.AddComponent<ParticleSystem>();
+            VisualEffect e = obj.AddComponent<VisualEffect>();
             p.transform.parent = obj.transform;
+            e.transform.parent = p.transform;
+            e.visualEffectAsset = Resources.Load<VisualEffectAsset>("VGXGraphs/BetterTrailVFX");
+            
+            if(type == ParticleType.FIRE)
+            {
+                e.SetVector4("Color1", new Vector4(2.52f, 0.016f, 0.016f, 1f));
+            } else if (type == ParticleType.ICE)
+            {
+                e.SetVector4("Color1", new Vector4(0.12f, 0.87f, 1f, 1f));
+            }
+
+            e.enabled = true;
 
             var main = p.main;
             main.duration = 20.0f;
             main.loop = false;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(1.0f, 1.2f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(30.0f, 40.0f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(2.0f, 3.2f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(40.0f, 50.0f);
             main.startSize = new ParticleSystem.MinMaxCurve(1.2f, 1.3f);
             main.maxParticles = 1000;
 
             var emission = p.emission;
-            emission.rateOverTime = new ParticleSystem.MinMaxCurve(50.0f, 80.0f);
+            emission.rateOverTime = new ParticleSystem.MinMaxCurve(70.0f, 80.0f);
             emission.rateOverDistance = new ParticleSystem.MinMaxCurve(0.0f, 0.0f);
-            emission.burstCount = 10;
+            emission.burstCount = 4;
 
             var shape = p.shape;
             shape.enabled = true;
@@ -221,14 +241,14 @@ namespace ELSNameSpace
             if (type == ParticleType.FIRE)
             {
                 renderer.material = Resources.Load<Material>("shaders/FireParticle");
-                renderer.trailMaterial = Resources.Load<Material>("shaders/FireExplosionParticle");
+                renderer.trailMaterial = Resources.Load<Material>("shaders/BetterTrailFire");
                 renderer.renderMode = ParticleSystemRenderMode.Mesh;
                 renderer.mesh = Constants.GetSphereMesh();
             }
             else if (type == ParticleType.ICE)
             {
                 renderer.material = Resources.Load<Material>("shaders/IceParticle");
-                renderer.trailMaterial = Resources.Load<Material>("shaders/IceTrail");
+                renderer.trailMaterial = Resources.Load<Material>("shaders/BetterTrailIce");
                 renderer.renderMode = ParticleSystemRenderMode.Mesh;
                 renderer.mesh = Constants.GetSphereMesh();
             }
@@ -237,7 +257,7 @@ namespace ELSNameSpace
             trail.enabled = true;
             trail.mode = ParticleSystemTrailMode.PerParticle;
             trail.ratio = 1.0f;
-            trail.lifetime = 0.4f;
+            trail.lifetime = 0.6f;
             trail.minVertexDistance = 4.0f;
 
             AnimationCurve curve = new AnimationCurve();

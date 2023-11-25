@@ -82,6 +82,12 @@ public class AudioTransform : MonoBehaviour
         explosion.Activate(1, new Vector3(0, 10, -40), ParticleType.ICE);
         explosion.Activate(2, new Vector3(-40, 10, 0), ParticleType.FIRE);
         explosion.Activate(3, new Vector3(0, 10, 40), ParticleType.ICE);
+
+        explosion.EmitParticle(0);
+        explosion.EmitParticle(1);
+        explosion.EmitParticle(2);
+        explosion.EmitParticle(3);
+
         finalPose();
     }
 
