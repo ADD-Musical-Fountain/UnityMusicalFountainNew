@@ -23,7 +23,7 @@ namespace MusicEventNameSpace
         public List<MusicEvent> getEventList()
         {
             List<MusicEvent> list = new List<MusicEvent>();
-            list.Add(new MusicEvent(100, "START"));
+            list.Add(new MusicEvent(5, "START"));
             list.Add(new MusicEvent(8, "A"));
             list.Add(new MusicEvent(11, "B"));
             list.Add(new MusicEvent(13, "C1"));

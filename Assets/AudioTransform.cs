@@ -455,7 +455,6 @@ public class AudioTransform : MonoBehaviour
             main.startSpeed = speed;
         }
     }
-    //左右喷射，微小摆动，两个一组，间隔四个，最后大家一起发射
     private float shakeCurveLeftRightBy2Timer;
     void shakeCurveLeftRightBy2(float width, float velocity, bool isRight = true)
     {
@@ -474,7 +473,6 @@ public class AudioTransform : MonoBehaviour
                 main.startSpeed = volume-2;
                 emission.enabled = true;
                 float sinValue = Mathf.Sin(shakeCurveLeftRightBy2Timer * velocity) * 0.05f;
-
                 Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
@@ -512,7 +510,7 @@ public class AudioTransform : MonoBehaviour
                 emission.enabled = true;
                 Vector3 xzDirection = new Vector3(0, 0, -1);
                 Vector3 left = 0.3f * xzDirection.normalized;
-                main.startSpeed = volume-2;
+                main.startSpeed = 8;
                 Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
@@ -521,7 +519,7 @@ public class AudioTransform : MonoBehaviour
                 emission.enabled = true;
                 Vector3 xzDirection = new Vector3(0, 0, 1);
                 Vector3 right = 0.3f * xzDirection.normalized;
-                main.startSpeed = volume-2;
+                main.startSpeed = 8;
                 Vector3 newDirection = Vector3.up + right + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
@@ -558,10 +556,10 @@ public class AudioTransform : MonoBehaviour
                 Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
                 emission.enabled = true;
-                main.startSpeed = volume-2;
+                main.startSpeed =8;
                 if (i % 10 == 2)
                 {
-                    main.startSpeed = volume;
+                    main.startSpeed = 10;
                 }
             }
             else
