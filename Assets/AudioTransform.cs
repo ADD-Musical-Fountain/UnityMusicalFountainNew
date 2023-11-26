@@ -75,20 +75,6 @@ public class AudioTransform : MonoBehaviour
         // initial emitter
         emitter = new EventEmitter();
         emitter.getEventList();
-        explosion = gameObject.AddComponent<ExplosionLauncherSystem>();
-        explosion.initialSetup(4);
-        // explosion.transform.position = Vector3.zero;
-        explosion.Activate(0, new Vector3(40, 10, 0), ParticleType.FIRE);
-        explosion.Activate(1, new Vector3(0, 10, -40), ParticleType.ICE);
-        explosion.Activate(2, new Vector3(-40, 10, 0), ParticleType.FIRE);
-        explosion.Activate(3, new Vector3(0, 10, 40), ParticleType.ICE);
-
-        explosion.EmitParticle(0);
-        explosion.EmitParticle(1);
-        explosion.EmitParticle(2);
-        explosion.EmitParticle(3);
-
-        finalPose();
     }
 
     // Update is called once per frame
@@ -146,19 +132,19 @@ public class AudioTransform : MonoBehaviour
         stopSubCircle(true, true);
         stopCurve1();
         stopCurve2();
-        ParticleSystem A1 = buildFountain(new Vector3(0, 0, finalPos[2] + 150), 15, 400);
-        ParticleSystem A2 = buildFountain(new Vector3(0, 0, finalPos[2] + 50), 15, 400);
-        ParticleSystem A3 = buildFountain(new Vector3(0, 130, finalPos[2] + 175), 8, 400);
+        ParticleSystem A1 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] + 150), 15, 400);
+        ParticleSystem A2 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] + 50), 15, 400);
+        ParticleSystem A3 = buildFountain(new Vector3(finalPos[0], 130, finalPos[2] + 175), 8, 400);
         A1.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.1f));
         A2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, 0.1f));
         A3.transform.rotation = Quaternion.LookRotation(Vector3.up * 2 + new Vector3(0, 0, -2f));
 
-        ParticleSystem D1 = buildFountain(new Vector3(0, 0, finalPos[2] + 0), 15, 400);
-        ParticleSystem D2 = buildFountain(new Vector3(0, 200, finalPos[2] + 0), 5, 400, 4);
+        ParticleSystem D1 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] + 0), 15, 400);
+        ParticleSystem D2 = buildFountain(new Vector3(finalPos[0], 200, finalPos[2] + 0), 5, 400, 4);
         D2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
 
-        ParticleSystem D4 = buildFountain(new Vector3(0, 0, finalPos[2] - 100), 15, 400);
-        ParticleSystem D5 = buildFountain(new Vector3(0, 200, finalPos[2] - 100), 5, 400, 4);
+        ParticleSystem D4 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] - 100), 15, 400);
+        ParticleSystem D5 = buildFountain(new Vector3(finalPos[0], 200, finalPos[2] - 100), 5, 400, 4);
         D5.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
 
         ADDList.Add(A1);
@@ -169,6 +155,23 @@ public class AudioTransform : MonoBehaviour
         ADDList.Add(D4);
         ADDList.Add(D5);
         stopADD();
+
+        explosion = gameObject.AddComponent<ExplosionLauncherSystem>();
+        explosion.initialSetup(8);
+        // explosion.transform.position = Vector3.zero;
+        explosion.Activate(0, finalPos + new Vector3(40, 10, 0), ParticleType.FIRE);
+        explosion.Activate(1, finalPos + new Vector3(0, 10, -40), ParticleType.ICE);
+        explosion.Activate(2, finalPos + new Vector3(-40, 10, 0), ParticleType.FIRE);
+        explosion.Activate(3, finalPos + new Vector3(0, 10, 40), ParticleType.ICE);
+        explosion.Activate(4, finalPos + new Vector3(0, 10, 60), ParticleType.FIRE);
+        explosion.Activate(5, finalPos + new Vector3(0, 10, -60), ParticleType.ICE);
+        explosion.Activate(6, finalPos + new Vector3(0, 10, 80), ParticleType.FIRE);
+        explosion.Activate(7, finalPos + new Vector3(0, 10, -80), ParticleType.ICE);
+
+        for(int i = 0; i < 8; i++)
+        {
+            explosion.EmitParticle(i);
+        }
     }
 
     private void activateFinalPose()
@@ -179,8 +182,13 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem particle = ADDList[i];
             ParticleSystem.EmissionModule emission = particle.emission;
             ParticleSystem.MainModule main = particle.main;
-            main.startColor = new ParticleSystem.MinMaxGradient(Color.black, Color.black);
+            main.startColor = new ParticleSystem.MinMaxGradient(Color.black, Color.yellow);
             emission.enabled = true;
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            explosion.EmitParticle(i);
         }
     }
 
@@ -313,10 +321,6 @@ public class AudioTransform : MonoBehaviour
                 stopMainCircle(true, true);
                 stopCurve1();
                 activateFinalPose();
-                explosion.EmitParticle(0);
-                explosion.EmitParticle(1);
-                explosion.EmitParticle(2);
-                explosion.EmitParticle(3);
                 break;
             default:
                 shakeCurveLeftRight(3, 2);
