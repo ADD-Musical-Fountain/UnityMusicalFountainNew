@@ -141,23 +141,24 @@ public class AudioTransform : MonoBehaviour
     public void finalPose()
 
     {
+        Vector3 finalPos = new Vector3((curveControlPoint[1][0] + curveControlPoint[2][0]) / 2, 0, (curveControlPoint[1][2] + curveControlPoint[2][2]) / 2);
         stopMainCircle(true, true);
         stopSubCircle(true, true);
         stopCurve1();
         stopCurve2();
-        ParticleSystem A1 = buildFountain(new Vector3(0, 0, 150), 15, 400);
-        ParticleSystem A2 = buildFountain(new Vector3(0, 0, 50), 15, 400);
-        ParticleSystem A3 = buildFountain(new Vector3(0, 130, 175), 8, 400);
+        ParticleSystem A1 = buildFountain(new Vector3(0, 0, finalPos[2] + 150), 15, 400);
+        ParticleSystem A2 = buildFountain(new Vector3(0, 0, finalPos[2] + 50), 15, 400);
+        ParticleSystem A3 = buildFountain(new Vector3(0, 130, finalPos[2] + 175), 8, 400);
         A1.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.1f));
         A2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, 0.1f));
         A3.transform.rotation = Quaternion.LookRotation(Vector3.up * 2 + new Vector3(0, 0, -2f));
 
-        ParticleSystem D1 = buildFountain(new Vector3(0, 0, 0), 15, 400);
-        ParticleSystem D2 = buildFountain(new Vector3(0, 200, 0), 5, 400, 4);
+        ParticleSystem D1 = buildFountain(new Vector3(0, 0, finalPos[2] + 0), 15, 400);
+        ParticleSystem D2 = buildFountain(new Vector3(0, 200, finalPos[2] + 0), 5, 400, 4);
         D2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
 
-        ParticleSystem D4 = buildFountain(new Vector3(0, 0, -100), 15, 400);
-        ParticleSystem D5 = buildFountain(new Vector3(0, 200, -100), 5, 400, 4);
+        ParticleSystem D4 = buildFountain(new Vector3(0, 0, finalPos[2] - 100), 15, 400);
+        ParticleSystem D5 = buildFountain(new Vector3(0, 200, finalPos[2] - 100), 5, 400, 4);
         D5.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
 
         ADDList.Add(A1);
