@@ -117,12 +117,8 @@ public class AudioTransform : MonoBehaviour
             finalPose();
             thisAudioSource.PlayDelayed(2f);
         }
-
         processEmitter();
         audioAttribute();
-        double elapsed = stopwatch.Elapsed.TotalSeconds;
-        // Debug.Log(elapsed);
-        Debug.Log(volume);
     }
     public void finalPose()
 
@@ -134,26 +130,40 @@ public class AudioTransform : MonoBehaviour
         stopCurve2();
         ParticleSystem A1 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] + 150), 15, 400);
         ParticleSystem A2 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] + 50), 15, 400);
-        ParticleSystem A3 = buildFountain(new Vector3(finalPos[0], 130, finalPos[2] + 175), 8, 400);
+        ParticleSystem A3 = buildFountain(new Vector3(finalPos[0], 100, finalPos[2] + 175), 8, 400);
         A1.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.1f));
         A2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, 0.1f));
         A3.transform.rotation = Quaternion.LookRotation(Vector3.up * 2 + new Vector3(0, 0, -2f));
 
         ParticleSystem D1 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] + 0), 15, 400);
         ParticleSystem D2 = buildFountain(new Vector3(finalPos[0], 200, finalPos[2] + 0), 5, 400, 4);
-        D2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
+        ParticleSystem D3 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] + 0), 15, 400);
 
-        ParticleSystem D4 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] - 100), 15, 400);
-        ParticleSystem D5 = buildFountain(new Vector3(finalPos[0], 200, finalPos[2] - 100), 5, 400, 4);
+        D2.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
+        D3.transform.rotation = Quaternion.LookRotation(Vector3.up*0.5f + new Vector3(0, 0, -1f));
+        var d3main = D3.main;
+        d3main.gravityModifier = 0;
+        d3main.startLifetime = new ParticleSystem.MinMaxCurve(1,1.5f);
+
+        ParticleSystem D4 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] - 130), 15, 400);
+        ParticleSystem D5 = buildFountain(new Vector3(finalPos[0], 200, finalPos[2] - 130), 5, 400, 4);
+        ParticleSystem D6 = buildFountain(new Vector3(finalPos[0], 0, finalPos[2] - 130), 15, 400);
+
         D5.transform.rotation = Quaternion.LookRotation(Vector3.up + new Vector3(0, 0, -0.8f));
+        D6.transform.rotation = Quaternion.LookRotation(Vector3.up * 0.5f + new Vector3(0, 0, -1f));
+        var d6main = D6.main;
+        d6main.gravityModifier = 0;
+        d6main.startLifetime = new ParticleSystem.MinMaxCurve(1, 1.5f);
 
         ADDList.Add(A1);
         ADDList.Add(A2);
         ADDList.Add(A3);
         ADDList.Add(D1);
         ADDList.Add(D2);
+        ADDList.Add(D3);
         ADDList.Add(D4);
         ADDList.Add(D5);
+        ADDList.Add(D6);
         stopADD();
 
         explosion = gameObject.AddComponent<ExplosionLauncherSystem>();
@@ -182,7 +192,6 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem particle = ADDList[i];
             ParticleSystem.EmissionModule emission = particle.emission;
             ParticleSystem.MainModule main = particle.main;
-            main.startColor = new ParticleSystem.MinMaxGradient(Color.black, Color.yellow);
             emission.enabled = true;
         }
 
@@ -212,12 +221,12 @@ public class AudioTransform : MonoBehaviour
         switch (emitter.currentStatus)
         {
             case "START":
-                setCurve1Velocity(8);
-                setCurve2Velocity(8);
-                setMainCircleVelocity(8);
-                setInnerMainCircleVelocity(8);
-                setSubCircleVelocity1(8);
-                setSubCircleVelocity2(8);
+                setCurve1Velocity(volume-2);
+                setCurve2Velocity(volume-2);
+                setMainCircleVelocity(volume - 2);
+                setInnerMainCircleVelocity(volume - 2);
+                setSubCircleVelocity1(volume - 2);
+                setSubCircleVelocity2(volume-2);
                 break;
             case "A":
                 shakeCurveLeftRightBy2(2, 2);
@@ -235,21 +244,21 @@ public class AudioTransform : MonoBehaviour
                 break;
             case "C1":
                 crossCurveLeftRightBy2(5, 2, 0);
-                setCurve2Velocity(8);
+                setCurve2Velocity(volume-2);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
                 stopADD();
                 break;
             case "C2":
                 crossCurveLeftRightBy2(5, 2, 1);
-                setCurve2Velocity(8);
+                setCurve2Velocity(volume-2);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
                 stopADD();
                 break;
             case "C3":
                 crossCurveLeftRightBy2(5, 2, 2);
-                setCurve2Velocity(8);
+                setCurve2Velocity(volume-2);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
                 stopADD();
@@ -284,7 +293,7 @@ public class AudioTransform : MonoBehaviour
                 stopADD();
                 break;
             case "F":
-                setCurve1Velocity(12);
+                setCurve1Velocity(volume);
                 shakeCurveLeftRightCross(2, 2);
                 stopCurve2();
                 stopMainCircle(true, true);
@@ -292,7 +301,7 @@ public class AudioTransform : MonoBehaviour
                 stopADD();
                 break;
             case "G":
-                setMainCircleVelocity(10);
+                setMainCircleVelocity(volume+2);
                 mainCircleInclineDynamic();
                 spiltCurveLeftRight(2, 2);
                 stopCurve2();
@@ -301,8 +310,9 @@ public class AudioTransform : MonoBehaviour
                 break;
             case "H":
                 mainCircleInclineTangent();
-                setSubCircleVelocity1(12);
-                setSubCircleVelocity2(12);
+                setSubCircleVelocity1(volume+2);
+                setSubCircleVelocity2(volume+2);
+                emitFirework();
                 stopCurve2();
                 setDirectionUpCurve1();
                 setCurve1Velocity(8);
@@ -313,7 +323,8 @@ public class AudioTransform : MonoBehaviour
                 innerMainCircleSin();
                 stopCurve2();
                 setDirectionUpCurve1();
-                setCurve1Velocity(8);
+                emitFirework();
+                setCurve1Velocity(volume);
                 stopSubCircle(true, true);
                 stopADD();
                 break;
@@ -337,6 +348,14 @@ public class AudioTransform : MonoBehaviour
         else
         {
             return b;
+        }
+    }
+
+    void emitFirework()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            explosion.EmitParticle(i);
         }
     }
 
@@ -452,7 +471,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem.EmissionModule emission = fountain.emission;
             if (i % 6 == 0)
             {
-                main.startSpeed = 8;
+                main.startSpeed = volume-2;
                 emission.enabled = true;
                 float sinValue = Mathf.Sin(shakeCurveLeftRightBy2Timer * velocity) * 0.05f;
 
@@ -461,7 +480,7 @@ public class AudioTransform : MonoBehaviour
             }
             else if (i % 6 == 1)
             {
-                main.startSpeed = 8;
+                main.startSpeed = volume-2;
                 emission.enabled = true;
                 float sinValue = Mathf.Sin(shakeCurveLeftRightBy2Timer * (velocity + 1)) * 0.05f;
                 Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
@@ -493,7 +512,7 @@ public class AudioTransform : MonoBehaviour
                 emission.enabled = true;
                 Vector3 xzDirection = new Vector3(0, 0, -1);
                 Vector3 left = 0.3f * xzDirection.normalized;
-                main.startSpeed = 8;
+                main.startSpeed = volume-2;
                 Vector3 newDirection = Vector3.up + left + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
@@ -502,7 +521,7 @@ public class AudioTransform : MonoBehaviour
                 emission.enabled = true;
                 Vector3 xzDirection = new Vector3(0, 0, 1);
                 Vector3 right = 0.3f * xzDirection.normalized;
-                main.startSpeed = 8;
+                main.startSpeed = volume-2;
                 Vector3 newDirection = Vector3.up + right + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
             }
@@ -539,10 +558,10 @@ public class AudioTransform : MonoBehaviour
                 Vector3 newDirection = Vector3.up + sinValue * radius * xzDirection;
                 fountain.transform.rotation = Quaternion.LookRotation(newDirection);
                 emission.enabled = true;
-                main.startSpeed = 8f;
+                main.startSpeed = volume-2;
                 if (i % 10 == 2)
                 {
-                    main.startSpeed = 10f;
+                    main.startSpeed = volume;
                 }
             }
             else
@@ -571,7 +590,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem.MainModule main = fountain.main;
             ParticleSystem.EmissionModule emission = fountain.emission;
             emission.enabled = true;
-            main.startSpeed = 8f;
+            main.startSpeed = volume;
             if (i % 8 == 0 || i % 8 == 1 || i % 8 == 2 || i % 8 == 3)
             {
                 Vector3 xzDirection = new Vector3(0, 0, -1);
@@ -614,7 +633,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem fountain = curveFountain[i];
             ParticleSystem.EmissionModule emission = fountain.emission;
             emission.enabled = true;
-            v.startSpeed = 8 + sinValue;
+            v.startSpeed = volume + sinValue;
         }
     }
 
@@ -650,7 +669,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem.MainModule main = fountain.main;
             ParticleSystem.EmissionModule emission = fountain.emission;
             emission.enabled = true;
-            main.startSpeed = 8f;
+            main.startSpeed = volume;
             Vector3 xzDirection = i < len / 2 ? new Vector3(0, 0, 1) * 0.2f : new Vector3(0, 0, -1) * 0.2f;
             Vector3 newDirection = Vector3.up + radius * xzDirection;
             fountain.transform.rotation = Quaternion.LookRotation(newDirection);
@@ -692,7 +711,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
             ParticleSystem.MainModule main = mainCircleFounatin[i].main;
             emission.enabled = true;
-            main.startSpeed = 8;
+            main.startSpeed = volume;
             if (outside)
             {
                 xzDirection = -1 * (circleCenterMain - mainCircleTransform[i].position).normalized;
@@ -719,7 +738,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem.MainModule v = innerMainCircleFounatin[i].main;
             ParticleSystem.EmissionModule emission = innerMainCircleFounatin[i].emission;
             emission.enabled = true;
-            v.startSpeed = 8 + sinValue;
+            v.startSpeed = volume + sinValue;
         }
     }
 
@@ -736,7 +755,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem.EmissionModule emission = mainCircleFounatin[i].emission;
             ParticleSystem.MainModule main = mainCircleFounatin[i].main;
             emission.enabled = true;
-            main.startSpeed = 8;
+            main.startSpeed = volume;
 
             xzDirection = (circleCenterMain - mainCircleTransform[i].position).normalized;
 
@@ -914,7 +933,7 @@ public class AudioTransform : MonoBehaviour
             float average = 0;
             for (int j = i * sampleCount; j < (i + 1) * sampleCount; j++)
             {
-                average = average + spectrumData[j] * j;
+                average = average + spectrumData[j];
             }
             if (frequencyBands.Count < frequencyBandsNum)
             {
@@ -926,6 +945,26 @@ public class AudioTransform : MonoBehaviour
             }
             volume += frequencyBands[i];
         }
+        Debug.Log("the current volume:" + volume);
+        if (volume < 4)
+        {
+            volume += 8;
+        }
+        else if (volume > 4 && volume < 8)
+        {
+            volume += 4;
+        }
+        else if (volume > 8 && volume < 12)
+        {
+            volume = volume;
+        }
+        else
+        {
+            volume = 12;
+        }
+        Debug.Log("the modify volume:" + volume);
+        // volumelist.Add(volume);
+        // Debug.Log("the max of volume:"+Mathf.Max(volumelist.ToArray()));
     }
     public Vector3 cubicBezier(float t)
     {

@@ -146,7 +146,7 @@ namespace ELSNameSpace
             main.loop = true;
             main.startLifetime = new ParticleSystem.MinMaxCurve(3.0f, 4.0f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(30.0f, 40.0f);
-            main.startSize = new ParticleSystem.MinMaxCurve(2.0f, 2.5f);
+            main.startSize = new ParticleSystem.MinMaxCurve(4.0f, 5.0f);
             main.maxParticles = 100;
 
             var emission = s.emission;
@@ -225,7 +225,7 @@ namespace ELSNameSpace
             main.loop = false;
             main.startLifetime = new ParticleSystem.MinMaxCurve(2.0f, 3.2f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(40.0f, 50.0f);
-            main.startSize = new ParticleSystem.MinMaxCurve(1.2f, 1.3f);
+            main.startSize = new ParticleSystem.MinMaxCurve(3.0f, 5.0f);
             main.maxParticles = 1000;
 
             var emission = p.emission;
