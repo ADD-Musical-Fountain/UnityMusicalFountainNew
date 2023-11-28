@@ -244,21 +244,21 @@ public class AudioTransform : MonoBehaviour
                 break;
             case "C1":
                 crossCurveLeftRightBy2(5, 2, 0);
-                setCurve2Velocity(volume-2);
+                //setCurve2Velocity(volume-2);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
                 stopADD();
                 break;
             case "C2":
                 crossCurveLeftRightBy2(5, 2, 1);
-                setCurve2Velocity(volume-2);
+                //setCurve2Velocity(volume-2);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
                 stopADD();
                 break;
             case "C3":
                 crossCurveLeftRightBy2(5, 2, 2);
-                setCurve2Velocity(volume-2);
+                //setCurve2Velocity(volume-2);
                 stopMainCircle(true, true);
                 stopSubCircle(true, true);
                 stopADD();
@@ -440,6 +440,8 @@ public class AudioTransform : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             ParticleSystem.MainModule main = curveFountain[i].main;
+            ParticleSystem.EmissionModule emission = curveFountain[i].emission;
+            emission.enabled = true;
             main.startSpeed = speed;
         }
     }
@@ -588,7 +590,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem.MainModule main = fountain.main;
             ParticleSystem.EmissionModule emission = fountain.emission;
             emission.enabled = true;
-            main.startSpeed = volume;
+            main.startSpeed = 8;
             if (i % 8 == 0 || i % 8 == 1 || i % 8 == 2 || i % 8 == 3)
             {
                 Vector3 xzDirection = new Vector3(0, 0, -1);
@@ -631,7 +633,7 @@ public class AudioTransform : MonoBehaviour
             ParticleSystem fountain = curveFountain[i];
             ParticleSystem.EmissionModule emission = fountain.emission;
             emission.enabled = true;
-            v.startSpeed = volume + sinValue;
+            v.startSpeed = 8 + sinValue;
         }
     }
 

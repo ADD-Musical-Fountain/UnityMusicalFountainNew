@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2019941252}
-  m_IndirectSpecularColor: {r: 1.1400794, g: 0.7365466, b: 2.153465, a: 1}
+  m_IndirectSpecularColor: {r: 1.140977, g: 0.6836957, b: 2.1373417, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -296,6 +296,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3490975488104674738, guid: eae38beb3866d1c4587dbc61b19af031, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928132487928904063, guid: eae38beb3866d1c4587dbc61b19af031, type: 3}
+      propertyPath: stopAction
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4928132487928904063, guid: eae38beb3866d1c4587dbc61b19af031, type: 3}
@@ -6093,7 +6097,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -15004,6 +15008,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1355109540437517764, guid: 0ad2f89ebfc50bd43a76aea980f28b22, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667645344633002872, guid: 0ad2f89ebfc50bd43a76aea980f28b22, type: 3}
+      propertyPath: stopAction
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7051161264409095752, guid: 0ad2f89ebfc50bd43a76aea980f28b22, type: 3}
@@ -35290,7 +35298,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1317290506449498999, guid: 044c6db2cd347fd4e974ccf496b843c7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
