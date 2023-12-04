@@ -363,7 +363,6 @@ public class AudioTransform : MonoBehaviour
     {
 
         GameObject particleSystemObject = Instantiate(particleSystemPrefab);
-        // GameObject bottomLightObj = Instantiate(bottomLight);
 
         ParticleSystem particleSystem = particleSystemObject.GetComponent<ParticleSystem>();
         ParticleSystem.MainModule mainModule = particleSystem.main;
@@ -377,8 +376,6 @@ public class AudioTransform : MonoBehaviour
         }
 
         mainModule.startSpeed = speed;
-
-        //bottomLightObj.transform.position = position;
 
         var emission = particleSystem.emission;
         emission.enabled = true;
@@ -637,7 +634,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    //全部左右摇摆
     private float shakeCurveLeftRightTimer;
     void shakeCurveLeftRight(float width, float velocity)
     {
