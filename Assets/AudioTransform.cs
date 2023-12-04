@@ -397,8 +397,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // curve
-    // stop
     void stopCurve1()
     {
         int len = curveFountain.Count;
@@ -532,8 +530,6 @@ public class AudioTransform : MonoBehaviour
     }
 
 
-    //左右喷射，微小摆动，四个一组，第三个比较高，间隔八个
-
     private float shakeCurveLeftRightBy4Timer;
     void shakeCurveLeftRightBy4(float width, float velocity, int step = 0)
     {
@@ -572,7 +568,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    //左右交叉，四个左四个右，微小摆动
     private float shakeCurveLeftRightCrossTimer;
     void shakeCurveLeftRightCross(float width, float velocity)
     {
@@ -606,7 +601,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    //正弦函数摆动
     void updateCurveBySin()
     {
         curveTimer += Time.deltaTime * 1;
@@ -672,8 +666,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // main circle
-    // stop
     void stopMainCircle(bool inner, bool outside)
     {
         int len = mainCircleFounatin.Count;
@@ -835,8 +827,6 @@ public class AudioTransform : MonoBehaviour
         }
     }
 
-    // sub circle
-    // stop
     void stopSubCircle(bool isSub1, bool isSub2)
     {
         int len = mainCircleFounatin.Count;
@@ -959,8 +949,6 @@ public class AudioTransform : MonoBehaviour
             volume = 12;
         }
         Debug.Log("the modify volume:" + volume);
-        // volumelist.Add(volume);
-        // Debug.Log("the max of volume:"+Mathf.Max(volumelist.ToArray()));
     }
     public Vector3 cubicBezier(float t)
     {
